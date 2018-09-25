@@ -14,6 +14,24 @@ import NavTwo from './components/NavTwo';
 // import General from './components/general/General';
 export default {
     name: 'App',
+    provide () {
+        return {
+            reload: this.reload
+        };
+    },
+    data () {
+        return {
+            isRouterAlive: true
+        };
+    },
+    methods: {
+        reload: function () {
+            this.isRouterAlive = false;
+            this.$nextTick(function () {
+                this.isRouterAlive = true;
+            });
+        }
+    },
     components: {
         NavTwo: NavTwo
     }

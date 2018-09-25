@@ -4,7 +4,7 @@
             <div class="container">
                 <div class="row child-pad-tb top">
                     <ul class="nav nav-pills col-md-7">
-                        <router-link tag="li" v-for="(item,$key) in navTopItemsLeft"  @click.native="selected($key)" v-bind:key="$key" :to="$key" :class="{'active-top':currentRoute === $key }">
+                        <router-link tag="li" v-for="(item,$key) in navTopItemsLeft"  @click.native="selected($key)" v-bind:key="$key" :to="{path:'/' + $key}" :class="{'active-top':currentOneRoute === $key }">
                             <a href="#">{{item}}</a>
                         </router-link>
                     </ul>
@@ -25,7 +25,7 @@
             <div class="container">
                 <div class="row child-pad-tb top">
                     <ul class="nav nav-pills col-md-7">
-                        <router-link role="presentation" tag="li"  v-for="(navChild,$key) in currTopItemChild" v-bind:key="$key" @click.native="selectedChild($key)" :to="{path:'/'+ currentRoute +'/'+ $key}" :class="{'active-child':activeChild === $key }">
+                        <router-link role="presentation" tag="li"  v-for="(navChild,$key) in currTopItemChild" v-bind:key="$key" :to="{path:'/'+ currentOneRoute +'/'+ $key}" :class="{'active-child':$route.path === '/'+ currentOneRoute +'/'+ $key }">
                             <a href="#">{{navChild}}</a>
                         </router-link>
                     </ul>
@@ -40,9 +40,7 @@ export default {
     name: 'Nav',
     data () {
         return {
-            currentRoute: '',
-            active: 'general',
-            activeChild: '',
+            currentOneRoute: '',
             navTopItemsLeft: {
                 general: '概况',
                 send: '发送',
@@ -60,53 +58,14 @@ export default {
     },
     methods: {
         selected: function (index) {
-            // console.log(this.$route.currentRoute);
-            /* var selected = this.navTopItemChild[index];
-            this.currTopItemChild = selected;
-            this.active = index;
-            if (typeof selected !== 'undefined') {
-                this.activeChild = Object.keys(selected)[0];
-                this.$router.push(this.activeChild);
-            } else {
-                this.activeChild = '';
-                this.$router.push('notFound');
-            }
-            console.log(this.$root.currentRoute); */
-            this.currentRoute = index;
-            this.currTopItemChild = this.navTopItemChild[this.currentRoute];
-        },
-        selectedChild: function (key) {
-            this.activeChild = key;
-            console.log(this.currentRoute);
+            this.currentOneRoute = index;
+            this.currTopItemChild = this.navTopItemChild[this.currentOneRoute];
         }
     },
     created: function () {
-        this.currentRoute = this.active;
-        this.currTopItemChild = this.navTopItemChild[this.currentRoute];
-        /* console.log(this.currentRoute);
-        var selected = this.navTopItemChild[this.active];
-        this.rip = this.$root.rip;
-        this.currTopItemChild = selected;
-        if (typeof selected !== 'undefined') {
-            this.activeChild = Object.keys(selected)[0];
-            this.$router.push(this.activeChild);
-        } else {
-            this.activeChild = '';
-            this.$router.push('notFound');
-        } */
-        /* this.$http.get('/api/test').then(function (response) {
-            console.log(response);
-        }); */
+        this.currentOneRoute = this.$router.currentRoute.path.split('/')[1];
+        this.currTopItemChild = this.navTopItemChild[this.currentOneRoute];
     }
-    /* watch: {
-        '$route': function (to, from) {
-            var key = to.path.substr(1);
-            if (key in this.navTopItemChild) {
-                this.currTopItemChild = this.navTopItemChild[to.path.substr(1)];
-                this.currentRoute = key;
-            }
-        }
-    } */
 };
 </script>
 
