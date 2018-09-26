@@ -10,10 +10,17 @@ import Basic from '@/components/transaction/Basic';
 import Record from '@/components/transaction/Record';
 import RecordInfo from '@/components/transaction/RecordInfo';
 
+import Test from '@/components/test/Test';
+
 Vue.use(Router);
 
 export default new Router({
     routes: [
+        {
+            path: '/Test',
+            name: 'Test',
+            component: Test
+        },
         {
             path: '/general',
             name: 'General',
