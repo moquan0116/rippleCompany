@@ -1,13 +1,5 @@
 <template>
   <div class="strut">
-     <!--<div class="row">
-         <div class="form-group">
-             <label for="inputPassword3" class="col-xs-3 control-label">供应商名称</label>
-             <div class="col-xs-9">
-                 <input type="text" class="form-control" name="agent_name" value="暂测试" required="" placeholder="供应商名称" aria-required="true" readonly="readonly">
-             </div>
-         </div>
-     </div>-->
       <div class="box">
           <div class="box-header">
               <el-form :inline="true" :model="formInline" ref="formInline" class="demo-form-inline">
@@ -16,8 +8,9 @@
                   </el-form-item>
                   <el-form-item label="类型">
                       <el-select v-model="formInline.type" placeholder="交易类型">
-                          <el-option label="payment" value="付款"></el-option>
-                          <el-option label="aaa" value="beijing"></el-option>
+                          <el-option label="请选择" value=""></el-option>
+                          <el-option label="付款" value='payment'></el-option>
+                          <el-option label="订单" value='order'></el-option>
                       </el-select>
                   </el-form-item>
                   <el-form-item>
@@ -114,8 +107,12 @@
               </form>-->
               <el-table
                       :data="tableData"
-                      border
                       :height="1100"
+                      border
+                      v-loading="isLoading"
+                      element-loading-text="没加缓存呢，稍等会儿啊"
+                      element-loading-spinner="el-icon-loading"
+                      element-loading-background="rgba(0, 0, 0, 0.8)"
                       style="width: 100%">
                   <el-table-column
                           prop="num"
@@ -154,15 +151,24 @@
                   </el-table-column>
                   <el-table-column label="操作">
                       <template slot-scope="scope">
-                          <el-button
-                                  type="info"
-                                  size="mini"
-                                  @click="handleEdit(scope.$index, scope.row)">查看</el-button>
+                          <el-popover
+                                  placement="left"
+                                  title="标题"
+                                  width="600"
+                                  offset="100"
+                                  trigger="click"
+                                  visible-arrow
+                                  content=RecordInfo>
+                              <el-button
+                                      type="info"
+                                      size="mini"
+                                      slot="reference"
+                                      @click="handleEdit(scope.$index, scope.row)">查看</el-button>
+                          </el-popover>
                       </template>
                   </el-table-column>
               </el-table>
           </div>
-          <pulse-loader class="testLoad" :loading="isLoading" :color="color"></pulse-loader>
           <div class="box-footer">
               <!--<div class="row text-center">
                   <ul class="pagination pagination-sm no-margin">
@@ -204,11 +210,13 @@ export default {
             formInline: {
                 id: '',
                 type: ''
-            }
+            },
+            'visible-arrow': false
         };
     },
     components: {
-        PulseLoader
+        PulseLoader,
+        RecordInfo
     },
     methods: {
         prev: function () {
@@ -230,12 +238,10 @@ export default {
                     return api.getTransactions(self.$root.rip.walletAddress, params);
                 });
             }).then(function (tranInfo) {
-                // console.log(tranInfo);
                 self.tranInfo = tranInfo;
                 self.formatTableData(tranInfo);
                 self.firstTran = tranInfo[0].id;
                 self.lastTran = tranInfo[tranInfo.length - 1].id;
-                self.isLoading = false;
             }).catch(function (error) {
                 // 需要指定版本范围 minLedgerVersion  maxLedgerVersion
                 if (error instanceof api.errors.MissingLedgerHistoryError) {
@@ -253,7 +259,6 @@ export default {
             });
         },
         getTran: function (params) {
-            console.log(params);
             const self = this;
             const api = this.getRippleApi();
             api.connect().then(function () {
@@ -263,7 +268,6 @@ export default {
                 self.formatTableData(tranInfo);
                 self.firstTran = tranInfo[0].id;
                 self.lastTran = tranInfo[tranInfo.length - 1].id;
-                self.isLoading = false;
             }).catch(function (error) {
                 // 需要指定版本范围 minLedgerVersion  maxLedgerVersion
                 if (error instanceof api.errors.MissingLedgerHistoryError) {
@@ -281,7 +285,6 @@ export default {
             });
         },
         formatTableData: function (tranInfo) {
-            console.log(tranInfo);
             if (tranInfo.length) { // 多条时
                 tranInfo.forEach((value, index, arr) => {
                     let tr = {
@@ -291,7 +294,8 @@ export default {
                         fee: value.outcome.fee,
                         result: value.outcome.result,
                         time: value.outcome.timestamp,
-                        version: value.outcome.ledgerVersion
+                        version: value.outcome.ledgerVersion,
+                        original: value
                     };
                     this.tableData.push(tr);
                 });
@@ -305,10 +309,12 @@ export default {
                     fee: tranInfo.outcome.fee,
                     result: tranInfo.outcome.result,
                     time: tranInfo.outcome.timestamp,
-                    version: tranInfo.outcome.ledgerVersion
+                    version: tranInfo.outcome.ledgerVersion,
+                    original: tranInfo
                 };
                 this.tableData.push(tr);
             }
+            this.isLoading = false;
         },
         see: function (data) {
             // console.log(data);
@@ -343,19 +349,31 @@ export default {
             }
             return newobj;
         },
-        handleEdit: function () {
-
-        },
-        handleDelete: function () {
-
+        handleEdit: function (index, row) {
+            console.log(this.tableData[index]);
         },
         onSubmit (formName) {
+            this.isLoading = true;
             this.tableData = [];
-            this.getTran(this.formInline.id);
-            // console.log(this.tableData);
+
+            if ('id' in this.formInline) {
+                this.getTran(this.formInline.id);
+            }
+
+            if ('type' in this.formInline) {
+                this.tranParams.types = [this.formInline.type];
+                this.getTrans(this.tranParams);
+            }
         },
         onReset (formName) {
-            this.$refs[formName].resetFields();
+            this.isLoading = true;
+            this.tableData = [];
+            let self = this;
+            let keys = Object.keys(this.formInline);
+            keys.forEach(function (value, index, arr) {
+                self.formInline[value] = '';
+            });
+            this.getTrans(this.tranParams);
         }
     },
     watch: {
@@ -364,7 +382,6 @@ export default {
         }
     },
     created: function () {
-        // this.page = this.$router.currentRoute.query.page;
         this.getTrans(this.tranParams);
     }
 };
