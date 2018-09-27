@@ -1,8 +1,8 @@
 <template>
-    <div class="box">
+    <div class="box" style="width: 100%">
         <div class="box-header">
         </div>
-        <div class="box-body">
+        <!--<div class="box-body">
             <div class="row m-top">
                 <div class="title col-xs-7">
                     <label class="col-xs-2">事务ID</label>
@@ -51,7 +51,7 @@
                     </div>
                 </div>
             </div>
-            <!--<form>
+            &lt;!&ndash;<form>
                 <table class="table table-bordered">
                     <thead>
                     <tr>
@@ -74,8 +74,8 @@
                         </tr>
                     </tbody>
                 </table>
-            </form>-->
-        </div>
+            </form>&ndash;&gt;
+        </div>-->
         <div class="box-footer">
         </div>
     </div>
@@ -85,14 +85,15 @@
 <script>
 export default {
     name: 'RecordInfo',
-    props: ['outAddress', 'id', 'currency', 'value', 'receiveAddress', 'outAddressValue', 'receAddressValue'],
+    // props: ['outAddress', 'id', 'currency', 'value', 'receiveAddress', 'outAddressValue', 'receAddressValue'],
+    props: ['tran'],
     /* data () {
         return {
             destination: {}
         };
     }, */
     created: function () {
-        console.log(this.test);
+        console.log(this.tran);
     }
 };
 </script>
@@ -100,5 +101,8 @@ export default {
 <style>
 .m-top{
     margin-top: 2em;
+}
+.el-message-box{
+    width: 1200px !important;
 }
 </style>

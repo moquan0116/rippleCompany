@@ -9,8 +9,7 @@ import 'bootstrap';
 import {RippleAPI} from 'ripple-lib';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
-// import layui from 'layui/layui-src/dist/css/layui.css';
-import layer from 'vue-layer';
+import Moment from 'moment';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
@@ -33,10 +32,24 @@ Vue.prototype.getRippleApi = function Ripple () {
         return Ripple.instance;
     }
 };
-/* 添加layer */
-Vue.prototype.$layer = layer(Vue, {
-    msgtime: 3 // 目前只有一项，即msg方法的默认消失时间，单位：秒
-});
+
+/* Vue.filter('dateFormat', function (dateString, type, pattern = 'YYYY-MM-DD HH:mm:ss') {
+    if (type === 'UTC') {
+        let date = Moment.utc(dateString).toDate();
+        return Moment(date).format(pattern);
+    } else {
+        return Moment(dateString).format(pattern);
+    }
+}); */
+
+Vue.prototype.dateFormat = function (dateString, type, pattern = 'YYYY-MM-DD HH:mm:ss') {
+    if (type === 'UTC') {
+        let date = Moment.utc(dateString).toDate();
+        return Moment(date).format(pattern);
+    } else {
+        return Moment(dateString).format(pattern);
+    }
+};
 
 /* eslint-disable no-new */
 new Vue({
