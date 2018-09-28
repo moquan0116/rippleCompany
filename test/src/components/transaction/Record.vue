@@ -269,7 +269,6 @@ export default {
                     this.tableData = [];
                     this.lastTran = null;
                 } else {
-                    console.log(88888);
                     if (tranInfo.length) { // 多条时
                         tranInfo.forEach((value, index, arr) => {
                             let tr = {
@@ -287,14 +286,14 @@ export default {
                         this.lastTran = tranInfo[tranInfo.length - 1].id;
                     }
                     if ('id' in tranInfo) { // 单条时
-                        console.log(1111);
+                        console.log(88888);
                         let tr1 = {
                             num: 1,
-                            type: tranInfo.type,
+                            type: self.tranType[tranInfo.type],
                             address: tranInfo.address,
                             fee: tranInfo.outcome.fee,
-                            result: tranInfo.outcome.result,
-                            time: tranInfo.outcome.timestamp,
+                            result: (tranInfo.outcome.result === 'tesSUCCESS') ? '成功' : '未成功',
+                            time: self.dateFormat(tranInfo.outcome.timestamp, 'UTC'),
                             version: tranInfo.outcome.ledgerVersion,
                             original: tranInfo
                         };
@@ -327,12 +326,11 @@ export default {
             this.$refs.moviesTable.toggleRowSelection(row);
         },
         onSubmit (formName) {
+            delete this.tranParams.start;
             if ('id' in this.formInline && this.formInline.id !== '') {
-                console.log(1111);
                 this.isLoading = true;
                 this.getTran(this.formInline.id);
             } else if ('types' in this.formInline && this.formInline.types !== undefined && this.formInline.types !== '') {
-                console.log(2222);
                 this.tranParams.types = [this.formInline.types];
                 this.isLoading = true;
                 this.getTrans(this.tranParams);
