@@ -10,7 +10,7 @@ import Basic from '@/components/transaction/Basic';
 import Record from '@/components/transaction/Record';
 import RecordInfo from '@/components/transaction/RecordInfo';
 
-import Test from '@/components/test/Test';
+// import Test from '@/components/test/Test';
 import Login from '@/components/Login';
 
 Vue.use(Router);
@@ -23,11 +23,6 @@ export default new Router({
             component: Login
         },
         {
-            path: '/Test',
-            name: 'Test',
-            component: Test
-        },
-        {
             path: '/general',
             name: 'General',
             component: General,
@@ -36,7 +31,8 @@ export default new Router({
                 {path: 'balance', component: Balance},
                 {path: 'history', component: History},
                 {path: 'host', component: Host}
-            ]
+            ],
+            hidden: true
         },
         {
             path: '/transaction',

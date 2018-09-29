@@ -3,7 +3,7 @@
     <div class="panel panel-default m-top">
       <div class="panel-heading">历史</div>
       <div class="panel-body">
-        这是历史页
+        <el-button type="primary" @click="submitForm('ruleForm2')">确定</el-button>
       </div>
     </div>
   </div>
@@ -16,6 +16,15 @@ export default {
         return {
             msg: '这是历史页面'
         };
+    },
+    methods: {
+        submitForm: function () {
+            this.$http.get('/api/test').then(response => {
+                console.log(response);
+            }, response => {
+                // error callback
+            });
+        }
     }
 };
 </script>

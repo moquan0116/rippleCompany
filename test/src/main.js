@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
+import store from './store';
 import VueResource from 'vue-resource';
 import 'jquery';
 import 'bootstrap';
@@ -12,6 +13,7 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 import Moment from 'moment';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+
 Vue.use(ElementUI);
 
 Vue.config.productionTip = false;
@@ -51,16 +53,28 @@ Vue.prototype.dateFormat = function (dateString, type, pattern = 'YYYY-MM-DD HH:
         return Moment(dateString).format(pattern);
     }
 };
-let login = false;
+
 router.beforeEach((to, from, next) => {
-    if (!login) {
-        if (to.path === '/login') {
-            next();
+    let login = localStorage.getItem('user');
+    let path = to.path;
+    if (path === '/login') {
+        next();
+        return;
+    }
+    console.log(1111);
+    console.log(login);
+    if (login) {
+        if (path === '/') {
+            next({
+                path: '/general/balance'
+            });
         } else {
-            next('/login');
+            next();
         }
     } else {
-        next();
+        next({
+            path: '/login'
+        });
     }
 });
 
@@ -74,10 +88,10 @@ new Vue({
             walletAddress: walletAddress,
             secret: secret,
             rippleTest: rippleTest
-        },
-        login: login
+        }
     },
     router,
+    store,
     components: { App },
     template: '<App/>'
 });

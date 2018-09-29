@@ -1,24 +1,16 @@
 <template>
-<div>
+<div v-if="login === true">
     <router-view></router-view>
 </div>
 </template>
 
 <script>
-// import NotFound from '../NotFound';
+import NavTwo from '../NavTwo';
 export default {
     name: 'Genneral',
-    created: function () {
-        console.log(this.$root.a);
-        /* this.$router.matcher.addRoutes({
-            routes: [
-                {
-                    path: '/',
-                    name: 'NotFound',
-                    component: NotFound
-                }
-            ]
-        }); */
+    props: ['login'],
+    components: {
+        NavTwo
     }
 };
 </script>

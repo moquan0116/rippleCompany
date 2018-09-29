@@ -4,13 +4,13 @@
             <NavTwo></NavTwo>
             <div class="container-fluid" style="margin-top: 1em;">
                 <div class="container">
-                    <router-view></router-view>
+                    <router-view v-if="login === true"></router-view>
                 </div>
             </div>
             <Footer></Footer>
         </div>
         <div class="login" v-else>
-            <router-view></router-view>
+            <router-view v-if="login === false"></router-view>
             <Footer></Footer>
         </div>
     </div>
@@ -26,12 +26,12 @@ export default {
             login: false
         };
     },
-    created: function () {
-        this.login = this.$root.login;
-    },
     components: {
         NavTwo,
         Footer
+    },
+    created: function () {
+        this.login = this.$store.state.isLogin;
     }
 };
 </script>
