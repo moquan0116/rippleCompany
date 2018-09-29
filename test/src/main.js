@@ -22,7 +22,8 @@ const secret = 'saD2EdEsCuD7YiQ9Sbw9DJuwTwYTL';
 // const secret = 'ssGE93bKwjHL1ypp5BRvQeZG4sEys';
 const rippleTest = 'wss://s.altnet.rippletest.net:51233';
 Vue.use(VueResource);
-/* 在vue中增加一个获取RippleApi的方法 */
+
+/* 在vue中增加一个获取RippleApi的方法 *81F5E21E35407D884A6CD4A731AEBFB6AF209E1B */
 Vue.prototype.getRippleApi = function Ripple () {
     // 确保只有单例
     if (Ripple.instance !== undefined) {
@@ -50,6 +51,18 @@ Vue.prototype.dateFormat = function (dateString, type, pattern = 'YYYY-MM-DD HH:
         return Moment(dateString).format(pattern);
     }
 };
+let login = false;
+router.beforeEach((to, from, next) => {
+    if (!login) {
+        if (to.path === '/login') {
+            next();
+        } else {
+            next('/login');
+        }
+    } else {
+        next();
+    }
+});
 
 /* eslint-disable no-new */
 new Vue({
@@ -61,7 +74,8 @@ new Vue({
             walletAddress: walletAddress,
             secret: secret,
             rippleTest: rippleTest
-        }
+        },
+        login: login
     },
     router,
     components: { App },

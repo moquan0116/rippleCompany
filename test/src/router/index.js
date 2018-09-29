@@ -11,11 +11,17 @@ import Record from '@/components/transaction/Record';
 import RecordInfo from '@/components/transaction/RecordInfo';
 
 import Test from '@/components/test/Test';
+import Login from '@/components/Login';
 
 Vue.use(Router);
 
 export default new Router({
     routes: [
+        {
+            path: '/login',
+            name: 'Login',
+            component: Login
+        },
         {
             path: '/Test',
             name: 'Test',
