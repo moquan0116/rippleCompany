@@ -1,5 +1,5 @@
 <template>
-<div v-if="login === true">
+<div>
     <router-view></router-view>
 </div>
 </template>
@@ -8,7 +8,6 @@
 import NavTwo from '../NavTwo';
 export default {
     name: 'Genneral',
-    props: ['login'],
     components: {
         NavTwo
     }

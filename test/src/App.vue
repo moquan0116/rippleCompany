@@ -1,16 +1,16 @@
 <template>
     <div class="layout">
-        <div class="main" v-if="login === true">
+        <div class="main" v-if="login">
             <NavTwo></NavTwo>
             <div class="container-fluid" style="margin-top: 1em;">
                 <div class="container">
-                    <router-view v-if="login === true"></router-view>
+                    <router-view v-if="login"></router-view>
                 </div>
             </div>
             <Footer></Footer>
         </div>
         <div class="login" v-else>
-            <router-view v-if="login === false"></router-view>
+            <router-view v-if="login"></router-view>
             <Footer></Footer>
         </div>
     </div>
@@ -31,6 +31,7 @@ export default {
         Footer
     },
     created: function () {
+        console.log(this.login);
         this.login = this.$store.state.isLogin;
     }
 };
