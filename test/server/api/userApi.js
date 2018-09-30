@@ -31,21 +31,31 @@ router.get('/', function (req, res) {
     res.send('出来吧')
 });
 
-router.post('/ripple', bodyParser.json(),(req, res) => {
+router.post('/login', bodyParser.json(),(req, res) => {
     /* user.findById(1).then(project => {
         res.json(project);
     }); */
     let post = req.body;
-    let data = {password: post.pass};
+    let data = {password: post.secret};
     /*user.findOrCreate({where: {address: req.body.address}, defaults: data})
         .spread((user, created) => {
             res.send({data:user,reslut: created});
         });*/
     user.findOne({
-        where: {address: post.address, password: post.pass}
+        where: {address: post.address, secret: post.secret}
     }).then(user => {
         res.json(user);
     })
+});
+
+router.post('/reg', bodyParser.json(),(req, res) => {
+    console.log(req);
+    let post = req.body;
+    let data = {address: post.address,secret: post.secret};
+    user.findOrCreate({where: data})
+        .spread((user, created) => {
+            res.send({data:user,reslut: created});
+        });
 });
 
 

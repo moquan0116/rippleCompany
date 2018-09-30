@@ -148,6 +148,8 @@ export default {
     name: 'Record',
     data () {
         return {
+            walletAddress: JSON.parse(localStorage.getItem('user')).address,
+            secret: JSON.parse(localStorage.getItem('user')).password,
             firstTran: '',
             lastTran: '',
             lastIndex: 0,
@@ -198,7 +200,7 @@ export default {
                 return api.getServerInfo().then(info => {
                     self.serverInfo = info;
                 }).then(serverInfo => {
-                    return api.getTransactions(self.$root.rip.walletAddress, params);
+                    return api.getTransactions(self.walletAddress, params);
                 });
             }).then(function (tranInfo) {
                 self.tranInfo = tranInfo;
@@ -247,7 +249,6 @@ export default {
             let self = this;
             this.isLoading = false;
             if ('start' in this.tranParams) {
-                console.log(44444);
                 if (tranInfo.length) { // 多条时
                     tranInfo.forEach((value, index, arr) => {
                         let tr = {
@@ -286,7 +287,6 @@ export default {
                         this.lastTran = tranInfo[tranInfo.length - 1].id;
                     }
                     if ('id' in tranInfo) { // 单条时
-                        console.log(88888);
                         let tr1 = {
                             num: 1,
                             type: self.tranType[tranInfo.type],
@@ -313,10 +313,10 @@ export default {
 
             this.form = {
                 id: tranId, // 事务ID
-                outAddress: data.address, // 转出地址
+                outAddress: destination.address, // 转出地址
                 currency: source.maxAmount.currency, // 货币类型
                 value: source.maxAmount.value, // 货币数量
-                receiveAddress: destination.address, // 接收地址
+                receiveAddress: data.address, // 接收地址
                 outAddressValue: outcome.balanceChanges[spec.source.address][0]['value'], // 余额变动值
                 receAddressValue: outcome.balanceChanges[spec.destination.address][0]['value'] // 余额变动值
             };

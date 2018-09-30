@@ -14,96 +14,45 @@
                         </p>
                     </div>
                 </div>
-                <div class="row" style="margin-top: 8em">
-                    <div class="login-form">
-                        <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
-                            <el-row :gutter="20">
-                                <el-col :span="24" >
-                                    <el-form-item label="钱包地址" prop="address">
-                                        <el-input type="text" v-model="ruleForm2.address" autocomplete="off"></el-input>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                            <el-row :gutter="20">
-                                <el-col :span="24" >
-                                    <el-form-item label="秘钥" prop="pass">
-                                        <el-input type="password" v-model="ruleForm2.pass" autocomplete="off"></el-input>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                            <el-row :gutter="20">
-                                <el-col :span="24" >
-                                    <el-form-item>
-                                        <el-button type="primary" @click="submitForm('ruleForm2')">确定</el-button>
-                                        <el-button @click="resetForm('ruleForm2')">重置</el-button>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                        </el-form>
-                    </div>
+                <div class="lr-box">
+                    <el-tabs type="border-card">
+                        <el-tab-pane label="登陆">
+                            <in-login></in-login>
+                        </el-tab-pane>
+                        <el-tab-pane>
+                            <span slot="label">注册</span>
+                            <in-reg></in-reg>
+                        </el-tab-pane>
+                    </el-tabs>
                 </div>
             </div>
         </div>
+        <Footer></Footer>
     </div>
 </template>
 
 <script>
+import Footer from './Footer';
+import InLogin from './InLogin';
+import InReg from './InReg';
 export default {
     name: 'Login',
     data () {
-        var validateAddress = (rule, value, callback) => {
-            if (value === '') {
-                callback(new Error('请输入钱包地址'));
-            } else {
-                callback();
-            }
-        };
-        var validatePass = (rule, value, callback) => {
-            if (value === '') {
-                callback(new Error('请输入钱包秘钥'));
-            } else {
-                callback();
-            }
-        };
         return {
-            ruleForm2: {
-                address: '',
-                pass: ''
-            },
-            rules2: {
-                address: [
-                    { validator: validateAddress, trigger: 'blur' }
-                ],
-                pass: [
-                    { validator: validatePass, trigger: 'blur' }
-                ]
-            }
+            currentTab: 'in-login',
+            tabs: ['in-login', 'in-reg'],
+            tabPosition: 'top'
         };
     },
-    methods: {
-        submitForm (formName) {
-            this.$refs[formName].validate((valid) => {
-                if (valid) {
-                    this.$http.post('/api/ripple', this.ruleForm2).then(userInfo => {
-                        if (userInfo) {
-                            localStorage.setItem('user', userInfo);
-                            this.$store.commit('login');
-                            this.$router.push({path: '/general'});
-                        } else {
-                            this.$store.commit('notLogin');
-                        }
-                    }, response => {
-                        // error callback
-                    });
-                } else {
-                    console.log('error submit!!');
-                    return false;
-                }
-            });
-        },
-        resetForm (formName) {
-            this.$refs[formName].resetFields();
+    computed: {
+        currentTabComponent: function () {
+            return this.currentTab.toLowerCase();
         }
+    },
+    components: {
+        Footer,
+        'in-login': InLogin,
+        'in-reg': InReg
     }
 };
 </script>
@@ -129,10 +78,9 @@ export default {
 .alert-info p{
     text-indent: 2em;
 }
-.login-form{
-    width: 40%;
-    padding: 2em 2em 2em 0;
-    margin: auto;
-    border: 1px solid #ccc;
+.lr-box{
+    width: 45%;
+    min-height: 40em !important;
+    margin: 7% auto auto auto;
 }
 </style>

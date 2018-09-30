@@ -15,14 +15,17 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(ElementUI);
-
 Vue.config.productionTip = false;
 
-const walletAddress = 'rU7xCqQeHURdPDzhE2NQ1U4XBjpDpUyFJQ';
+// const walletAddress = 'rU7xCqQeHURdPDzhE2NQ1U4XBjpDpUyFJQ';
 // const walletAddress = 'rKoNYSwjt78AXCKVT7Y5PaaPfBpRgcWw25';
-const secret = 'saD2EdEsCuD7YiQ9Sbw9DJuwTwYTL';
+/* let userInfo = JSON.parse(localStorage.getItem('user'));
+let walletAddress = userInfo === null ? 'null' : userInfo.address;
+let secret = userInfo === null ? 'null' : userInfo.secret; */
+// const secret = 'saD2EdEsCuD7YiQ9Sbw9DJuwTwYTL';
 // const secret = 'ssGE93bKwjHL1ypp5BRvQeZG4sEys';
 const rippleTest = 'wss://s.altnet.rippletest.net:51233';
+// const rippleTest = 'wss://s1.ripple.com:443';
 Vue.use(VueResource);
 
 /* 在vue中增加一个获取RippleApi的方法 *81F5E21E35407D884A6CD4A731AEBFB6AF209E1B */
@@ -61,20 +64,13 @@ router.beforeEach((to, from, next) => {
         next();
         return;
     }
-    console.log(1111);
-    console.log(login);
-    if (login) {
-        if (path === '/') {
-            next({
-                path: '/general/balance'
-            });
-        } else {
-            next();
-        }
-    } else {
+
+    if (login === null || login === '') {
         next({
             path: '/login'
         });
+    } else {
+        next();
     }
 });
 
@@ -85,8 +81,8 @@ new Vue({
         currentRoute: window.location.pathname,
         rip: {
             RippleAPI: RippleAPI,
-            walletAddress: walletAddress,
-            secret: secret,
+            /* walletAddress: walletAddress,
+            secret: secret, */
             rippleTest: rippleTest
         }
     },

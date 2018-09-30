@@ -3,19 +3,37 @@
         <div class="bg-top" id="top-bar">
             <div class="container">
                 <div class="row child-pad-tb top">
-                    <ul class="nav nav-pills col-md-7">
+                    <ul class="nav nav-pills col-md-6">
                         <router-link tag="li" v-for="(item,$key) in navTopItemsLeft"  @click.native="selected($key)" v-bind:key="$key" :to="{path:'/' + $key}" :class="{'active-top':currentOneRoute === $key }">
                             <a href="#">{{item}}</a>
                         </router-link>
                     </ul>
-                    <ul class="nav nav-pills col-md-5">
+                    <ul class="nav nav-pills col-md-6 behind">
                         <li role="presentation">
                             <a href="#">
                                 <i class="dot"></i>
-                                <span>rLPummHow5wrSVPUmKbQBmpT2QocZ5gzo9</span>
+                                <span>{{user}}</span>
                             </a>
                         </li>
-                        <li role="presentation"><a href="#">Ling</a></li>
+                        <li role="presentation">
+                            <a href="#">
+                                <i class="el-icon-bell" style="font-size:1.2em;color: #fff"></i>
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a>
+                                <!--<i class="el-icon-setting" style="font-size:1.2em;"></i>-->
+                                <el-dropdown trigger="click" @command="handleCommand">
+                                    <span class="el-dropdown-link">
+                                        <i class="el-icon-setting" style="font-size:1.2em;color: #fff"></i>
+                                    </span>
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item command="settings">设置</el-dropdown-item>
+                                        <el-dropdown-item command="logout">退出</el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -53,13 +71,23 @@ export default {
                 transaction: {basic: '基本', record: '记录', advanced: '高级'}
             },
             currTopItemChild: [],
-            rip: ''
+            rip: '',
+            user: JSON.parse(localStorage.getItem('user')).address
         };
     },
     methods: {
         selected: function (index) {
             this.currentOneRoute = index;
             this.currTopItemChild = this.navTopItemChild[this.currentOneRoute];
+        },
+        handleCommand: function (command) {
+            if (command === 'logout') {
+                this.logOut();
+            }
+        },
+        logOut: function () {
+            localStorage.removeItem('user');
+            this.$router.push({path: '/login'});
         }
     },
     created: function () {
@@ -127,5 +155,8 @@ export default {
     }
     .m-top{
         margin-top: 1em;
+    }
+    .el-dropdown{
+        padding: 0 !important;
     }
 </style>

@@ -12,15 +12,25 @@ import RecordInfo from '@/components/transaction/RecordInfo';
 
 // import Test from '@/components/test/Test';
 import Login from '@/components/Login';
+import Register from '@/components/Register';
 
 Vue.use(Router);
 
 export default new Router({
     routes: [
         {
+            path: '/',
+            redirect: '/general/balance'
+        },
+        {
             path: '/login',
             name: 'Login',
             component: Login
+        },
+        {
+            path: '/register',
+            name: 'Register',
+            component: Register
         },
         {
             path: '/general',
@@ -31,8 +41,7 @@ export default new Router({
                 {path: 'balance', component: Balance},
                 {path: 'history', component: History},
                 {path: 'host', component: Host}
-            ],
-            hidden: true
+            ]
         },
         {
             path: '/transaction',

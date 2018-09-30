@@ -59,10 +59,11 @@ export default {
     data () {
         return {
             tran: {},
-            walletAddress: this.$root.rip.walletAddress,
+            walletAddress: JSON.parse(localStorage.getItem('user')).address,
+            secret: JSON.parse(localStorage.getItem('user')).password,
             toAddress: '',
             currency: 'XRP',
-            amount: 0,
+            amount: 1,
             api: this.getRippleApi(),
             msg: {},
             flag: 'info'
@@ -163,7 +164,7 @@ export default {
                 };
                 return this.api.getLedger().then(ledger => {
                     // console.log('Current Ledger', ledger.ledgerVersion);
-                    return this.submitTransaction(ledger.ledgerVersion, prepared, 'saD2EdEsCuD7YiQ9Sbw9DJuwTwYTL');
+                    return this.submitTransaction(ledger.ledgerVersion, prepared, this.secret);
                 });
             }).then((signed) => {
                 // console.log(signed);
