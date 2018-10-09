@@ -1,28 +1,24 @@
 <template>
     <div class="row">
         <div class="reg-box">
-            <el-row>
-                <el-button type="primary" v-if="complete === false" @click="create">生成账号</el-button>
-                <div class="add-box" v-show="complete">
-                    <div>
-                        <h2>重要信息：</h2>
-                        <p>
-                            下方的秘钥让你可以在丢失密码的小概率事件中拿回你的钱。在这种情况下，你的联系人信息会丢失，但任何拥有该秘钥的人可以取出你的钱。所以请将它保管在安全的地方。在这里了解更多关于秘钥和钱包安全的信息安全
-                        </p>
-                    </div>
-                    <div class="info-box">
-                        <span>Ripple 地址</span>
-                        <div>{{info.address}}</div>
-                    </div>
-                    <div class="info-box">
-                        <span>密钥：</span>
-                        <div>{{info.secret}}</div>
-                    </div>
-                </div>
-                <div style="margin-top: 0.5em" v-if="complete === true">
-                    <el-button type="primary" @click="login">我已经保存好了</el-button>
-                </div>
-            </el-row>
+            <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
+                <el-form-item label="用户名" prop="name">
+                    <el-input type="text" v-model="ruleForm2.name" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" prop="pass">
+                    <el-input type="password" v-model="ruleForm2.pass" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="确认密码" prop="checkPass">
+                    <el-input type="password" v-model="ruleForm2.checkPass" autocomplete="off"></el-input>
+                </el-form-item>
+                <!--<el-form-item label="手机" prop="phone">
+                    <el-input v-model.number="ruleForm2.phone"></el-input>
+                </el-form-item>-->
+                <el-form-item>
+                    <el-button type="primary" @click="submitForm('ruleForm2')">确定</el-button>
+                    <el-button @click="resetForm('ruleForm2')">重置</el-button>
+                </el-form-item>
+            </el-form>
         </div>
     </div>
 </template>
@@ -31,57 +27,92 @@
 export default {
     name: 'InReg',
     data () {
+        let validatePass = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请输入密码'));
+            } else {
+                if (this.ruleForm2.checkPass !== '') {
+                    this.$refs.ruleForm2.validateField('checkPass');
+                }
+                callback();
+            }
+        };
+        let validatePass2 = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请再次输入密码'));
+            } else if (value !== this.ruleForm2.pass) {
+                callback(new Error('两次输入密码不一致!'));
+            } else {
+                callback();
+            }
+        };
         return {
-            info: {},
-            complete: false
+            ruleForm2: {
+                name: '',
+                pass: '',
+                checkPass: ''
+                // phone: ''
+            },
+            rules2: {
+                name: [
+                    { required: true, message: '请输入用户名', trigger: 'blur' },
+                    { min: 2, max: 25, message: '长度在 2 到 25 个字符', trigger: 'blur' }
+                ],
+                pass: [
+                    { required: true, validator: validatePass, trigger: 'blur' }
+                ],
+                checkPass: [
+                    { required: true, validator: validatePass2, trigger: 'blur' }
+                ]
+                /* phone: [
+                    { required: false, trigger: 'blur' }
+                ] */
+            }
         };
     },
     methods: {
-        create: function () {
-            /* const api = this.getRippleApi();
-            const self = this;
-            api.connect().then(function () {
-                return api.generateAddress();
-            }).then(function (info) {
-                if (typeof info === 'object' && 'address' in info && 'secret' in info) {
-                    self.info = info;
-                    self.saveToDb();
+        submitForm (formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    console.log(this.ruleForm2);
+                    this.saveToDb(this.ruleForm2);
                 } else {
-                    self.info = {};
+                    console.log('error submit!!');
+                    return false;
                 }
-            }).catch(console.error); */
-            const self = this;
+            });
+        },
+        resetForm (formName) {
+            this.$refs[formName].resetFields();
+        },
+        saveToDb: function (regInfo) {
             const rippletest = 'https://faucet.altnet.rippletest.net/accounts';
             this.$http.post(rippletest).then(response => {
-                self.saveToDb(response.body);
+                let account = response.body.account;
+                regInfo.address = account.address;
+                regInfo.secret = account.secret;
+                this.$http.post('/api/reg', regInfo).then(response => {
+                    let userInfo = response.body;
+                    if (userInfo.reslut === true) {
+                        this.info = userInfo.data;
+                        localStorage.setItem('user', JSON.stringify(userInfo.data));
+                        this.complete = true;
+                        this.$message({
+                            message: '恭喜，操作成功',
+                            type: 'success'
+                        });
+                        this.$router.push({path: '/general'});
+                    } else {
+                        this.info = {};
+                        this.$message.error('操作失败');
+                        // this.$store.commit('notLogin');
+                    }
+                }, response => {
+                    // error callback
+                });
             }, response => {
                 // error callback
             });
-        },
-        saveToDb: function (account) {
-            console.log(account);
-            this.$http.post('/api/reg', account.account).then(response => {
-                let userInfo = response.body;
-                console.log(response.body.reslut);
-                if (userInfo.reslut === true) {
-                    this.info = userInfo.data;
-                    this.complete = true;
-                    console.log(this.info);
-                    this.$message({
-                        message: '恭喜，操作成功',
-                        type: 'success'
-                    });
-                } else {
-                    this.info = {};
-                    this.$message.error('操作失败');
-                    // this.$store.commit('notLogin');
-                }
-            }, response => {
-                // error callback
-            });
-        },
-        login: function () {
-            this.$router.push({path: '/general'});
         }
     }
 };

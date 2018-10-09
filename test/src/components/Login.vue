@@ -35,12 +35,13 @@
 import Footer from './Footer';
 import InLogin from './InLogin';
 import InReg from './InReg';
+import CreateAddress from './CreateAddress';
 export default {
     name: 'Login',
     data () {
         return {
             currentTab: 'in-login',
-            tabs: ['in-login', 'in-reg'],
+            tabs: ['in-login', 'create-address'],
             tabPosition: 'top'
         };
     },
@@ -52,7 +53,8 @@ export default {
     components: {
         Footer,
         'in-login': InLogin,
-        'in-reg': InReg
+        'in-reg': InReg,
+        'create-address': CreateAddress
     }
 };
 </script>

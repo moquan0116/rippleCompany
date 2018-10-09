@@ -18,10 +18,13 @@ const sequelize = new Sequelize(config.database, config.user, config.password, {
 
 const user = sequelize.define('hj_user', {
     id: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true},
-    address: Sequelize.STRING,
+    username: Sequelize.STRING(50),
     password: Sequelize.STRING(50),
+    address: Sequelize.STRING,
     secret: Sequelize.STRING,
-    memo: Sequelize.TEXT
+    name: Sequelize.STRING,
+    sex: Sequelize.TINYINT,
+    status: Sequelize.TINYINT
 },{
     timestamps: false,
     freezeTableName: true,
@@ -31,28 +34,30 @@ router.get('/', function (req, res) {
     res.send('出来吧')
 });
 
+/*登陆*/
 router.post('/login', bodyParser.json(),(req, res) => {
     /* user.findById(1).then(project => {
         res.json(project);
     }); */
     let post = req.body;
-    let data = {password: post.secret};
+    let data = {username: post.username, password: post.password};
     /*user.findOrCreate({where: {address: req.body.address}, defaults: data})
         .spread((user, created) => {
             res.send({data:user,reslut: created});
         });*/
     user.findOne({
-        where: {address: post.address, secret: post.secret}
+        where: data
     }).then(user => {
         res.json(user);
     })
 });
 
+/*注册*/
 router.post('/reg', bodyParser.json(),(req, res) => {
-    console.log(req);
     let post = req.body;
-    let data = {address: post.address,secret: post.secret};
-    user.findOrCreate({where: data})
+    let data = {username: post.name,password: post.pass,address: post.address, secret: post.secret};
+    let condition = {username: post.name}
+    user.findOrCreate({where: condition, defaults: data})
         .spread((user, created) => {
             res.send({data:user,reslut: created});
         });

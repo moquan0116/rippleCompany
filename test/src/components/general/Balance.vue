@@ -24,7 +24,6 @@ export default {
         };
     },
     created: function () {
-        console.log(this.$root.rip);
         const self = this;
         const api = this.getRippleApi();
         api.on('error', (errorCode, errorMessage) => {
@@ -37,7 +36,6 @@ export default {
             console.log('disconnected, code:', code);
         });
         api.connect().then(function () {
-            console.log(JSON.parse(localStorage.getItem('user')).address);
             return api.getAccountInfo(JSON.parse(localStorage.getItem('user')).address);
         }).then(function (accountInfo) {
             self.accountInfo = [

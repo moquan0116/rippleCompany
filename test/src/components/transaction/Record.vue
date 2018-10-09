@@ -313,10 +313,10 @@ export default {
 
             this.form = {
                 id: tranId, // 事务ID
-                outAddress: destination.address, // 转出地址
+                outAddress: data.address, // 转出地址
                 currency: source.maxAmount.currency, // 货币类型
                 value: source.maxAmount.value, // 货币数量
-                receiveAddress: data.address, // 接收地址
+                receiveAddress: destination.address, // 接收地址
                 outAddressValue: outcome.balanceChanges[spec.source.address][0]['value'], // 余额变动值
                 receAddressValue: outcome.balanceChanges[spec.destination.address][0]['value'] // 余额变动值
             };

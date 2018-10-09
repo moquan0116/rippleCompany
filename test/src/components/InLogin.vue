@@ -4,15 +4,15 @@
             <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
                 <el-row :gutter="20">
                     <el-col :span="24" >
-                        <el-form-item label="钱包地址" prop="address">
-                            <el-input type="text" v-model="ruleForm2.address" autocomplete="off"></el-input>
+                        <el-form-item label="用户名" prop="username">
+                            <el-input type="text" v-model="ruleForm2.username" autocomplete="off"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row :gutter="20">
                     <el-col :span="24" >
-                        <el-form-item label="秘钥" prop="secret">
-                            <el-input type="password" v-model="ruleForm2.secret" autocomplete="off"></el-input>
+                        <el-form-item label="密码" prop="secret">
+                            <el-input type="password" v-model="ruleForm2.password" autocomplete="off"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -36,28 +36,28 @@ export default {
     data () {
         var validateAddress = (rule, value, callback) => {
             if (value === '') {
-                callback(new Error('请输入钱包地址'));
+                callback(new Error('请输入用户名'));
             } else {
                 callback();
             }
         };
         var validatePass = (rule, value, callback) => {
             if (value === '') {
-                callback(new Error('请输入钱包秘钥'));
+                callback(new Error('请输入密码'));
             } else {
                 callback();
             }
         };
         return {
             ruleForm2: {
-                address: '',
-                secret: ''
+                username: '',
+                password: ''
             },
             rules2: {
-                address: [
+                username: [
                     { validator: validateAddress, trigger: 'blur' }
                 ],
-                secret: [
+                password: [
                     { validator: validatePass, trigger: 'blur' }
                 ]
             }
@@ -68,8 +68,8 @@ export default {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     this.$http.post('/api/login', this.ruleForm2).then(response => {
+                        console.log(response.body);
                         let userInfo = JSON.stringify(response.body);
-                        console.log(userInfo);
                         if (userInfo !== 'null') {
                             localStorage.setItem('user', userInfo);
                             // this.$store.commit('login');

@@ -70,7 +70,11 @@ router.beforeEach((to, from, next) => {
             path: '/login'
         });
     } else {
-        next();
+        if (to.matched.length === 0) {
+            from.name ? next({'name': from.name}) : next({ 'path': from.path });
+        } else {
+            next();
+        }
     }
 });
 

@@ -60,7 +60,7 @@ export default {
         return {
             tran: {},
             walletAddress: JSON.parse(localStorage.getItem('user')).address,
-            secret: JSON.parse(localStorage.getItem('user')).password,
+            secret: JSON.parse(localStorage.getItem('user')).secret,
             toAddress: '',
             currency: 'XRP',
             amount: 1,
@@ -131,6 +131,7 @@ export default {
                             .then(resolve, reject), 1000);
                     });
                 }
+                console.log(hash);
                 console.log(error);
                 return error;
             });
