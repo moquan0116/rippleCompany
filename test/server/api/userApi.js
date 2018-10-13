@@ -29,26 +29,20 @@ const user = sequelize.define('hj_user', {
     timestamps: false,
     freezeTableName: true,
 });
+router.use(require('cors')());
 
 router.get('/', function (req, res) {
     res.send('出来吧')
 });
-
 /*登陆*/
 router.post('/login', bodyParser.json(),(req, res) => {
-    /* user.findById(1).then(project => {
-        res.json(project);
-    }); */
     let post = req.body;
     let data = {username: post.username, password: post.password};
-    /*user.findOrCreate({where: {address: req.body.address}, defaults: data})
-        .spread((user, created) => {
-            res.send({data:user,reslut: created});
-        });*/
     user.findOne({
         where: data
     }).then(user => {
-        res.json(user);
+        res.type('application/json');
+        res.send(user);
     })
 });
 
@@ -62,6 +56,5 @@ router.post('/reg', bodyParser.json(),(req, res) => {
             res.send({data:user,reslut: created});
         });
 });
-
 
 module.exports = router;

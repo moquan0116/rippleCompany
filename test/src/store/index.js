@@ -5,7 +5,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        isLogin: false
+        isLogin: false,
+        num: 0
     },
     mutations: {
         login (state) {
@@ -13,6 +14,9 @@ export default new Vuex.Store({
         },
         notLogin (state) {
             state.isLogin = false;
+        },
+        test (state) {
+            state.num++;
         }
     }
 });

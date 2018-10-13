@@ -15,12 +15,12 @@
                     </div>
                 </div>
                 <div class="lr-box">
-                    <el-tabs type="border-card">
-                        <el-tab-pane label="登陆">
+                    <el-tabs type="border-card" stretch>
+                        <el-tab-pane label="打开账户">
                             <in-login></in-login>
                         </el-tab-pane>
                         <el-tab-pane>
-                            <span slot="label">注册</span>
+                            <span slot="label">创建账户</span>
                             <in-reg></in-reg>
                         </el-tab-pane>
                     </el-tabs>
@@ -35,15 +35,19 @@
 import Footer from './Footer';
 import InLogin from './InLogin';
 import InReg from './InReg';
-import CreateAddress from './CreateAddress';
+// import CreateAddress from './CreateAddress';
 export default {
     name: 'Login',
     data () {
         return {
-            currentTab: 'in-login',
-            tabs: ['in-login', 'create-address'],
+            currentTab: 'in-reg',
+            tabs: ['in-login', 'in-reg'],
+            activeName: 'ses',
             tabPosition: 'top'
         };
+    },
+    methods: {
+
     },
     computed: {
         currentTabComponent: function () {
@@ -53,8 +57,8 @@ export default {
     components: {
         Footer,
         'in-login': InLogin,
-        'in-reg': InReg,
-        'create-address': CreateAddress
+        'in-reg': InReg
+        // 'create-address': CreateAddress
     }
 };
 </script>
@@ -81,7 +85,7 @@ export default {
     text-indent: 2em;
 }
 .lr-box{
-    width: 45%;
+    /*width: 45%;*/
     min-height: 40em !important;
     margin: 7% auto auto auto;
 }

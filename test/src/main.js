@@ -8,11 +8,15 @@ import VueResource from 'vue-resource';
 import 'jquery';
 import 'bootstrap';
 import {RippleAPI} from 'ripple-lib';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import Moment from 'moment';
+
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+
+import Global from './components/Global';
 
 Vue.use(ElementUI);
 Vue.config.productionTip = false;
@@ -38,15 +42,7 @@ Vue.prototype.getRippleApi = function Ripple () {
         return Ripple.instance;
     }
 };
-
-/* Vue.filter('dateFormat', function (dateString, type, pattern = 'YYYY-MM-DD HH:mm:ss') {
-    if (type === 'UTC') {
-        let date = Moment.utc(dateString).toDate();
-        return Moment(date).format(pattern);
-    } else {
-        return Moment(dateString).format(pattern);
-    }
-}); */
+Vue.prototype.$GLOBAL = Global;
 
 Vue.prototype.dateFormat = function (dateString, type, pattern = 'YYYY-MM-DD HH:mm:ss') {
     if (type === 'UTC') {

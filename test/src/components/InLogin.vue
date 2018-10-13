@@ -68,7 +68,6 @@ export default {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     this.$http.post('/api/login', this.ruleForm2).then(response => {
-                        console.log(response.body);
                         let userInfo = JSON.stringify(response.body);
                         if (userInfo !== 'null') {
                             localStorage.setItem('user', userInfo);
