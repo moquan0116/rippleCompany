@@ -4,14 +4,21 @@
             <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
                 <el-row :gutter="20">
                     <el-col :span="24" >
-                        <el-form-item label="用户名" prop="username">
-                            <el-input type="text" v-model="ruleForm2.username" autocomplete="off"></el-input>
+                        <el-form-item label="操作">
+                            <el-button @click="showDialog">选择账户文件</el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row :gutter="20">
                     <el-col :span="24" >
-                        <el-form-item label="密码" prop="secret">
+                        <el-form-item label="文件路径">
+                            {{path}}
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="24" >
+                        <el-form-item label="密码" prop="password">
                             <el-input type="password" v-model="ruleForm2.password" autocomplete="off"></el-input>
                         </el-form-item>
                     </el-col>
@@ -19,8 +26,7 @@
                 <el-row :gutter="20">
                     <el-col :span="24" >
                         <el-form-item>
-                            <el-button type="primary" @click="submitForm('ruleForm2')">确定</el-button>
-                            <el-button @click="resetForm('ruleForm2')">重置</el-button>
+                            <el-button type="primary" @click="submitForm('ruleForm2')">打开账户</el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -34,55 +40,57 @@
 export default {
     name: 'InLogin',
     data () {
-        var validateAddress = (rule, value, callback) => {
-            if (value === '') {
-                callback(new Error('请输入用户名'));
-            } else {
-                callback();
-            }
-        };
         var validatePass = (rule, value, callback) => {
             if (value === '') {
                 callback(new Error('请输入密码'));
             } else {
-                callback();
+                this.$GLOBAL.ipc.send('decrypt', {path: this.path, pwd: this.ruleForm2.password});
+                this.$GLOBAL.ipc.on('decrypt-ok', (event, res) => {
+                    if (res) {
+                        sessionStorage.setItem('user', res);
+                        callback();
+                    } else {
+                        callback(new Error('密码错误'));
+                    }
+                });
             }
         };
         return {
             ruleForm2: {
-                username: '',
                 password: ''
             },
             rules2: {
-                username: [
-                    { validator: validateAddress, trigger: 'blur' }
-                ],
                 password: [
                     { validator: validatePass, trigger: 'blur' }
                 ]
-            }
+            },
+            path: '',
+            errorMsg: ''
         };
     },
     methods: {
         submitForm (formName) {
-            this.$refs[formName].validate((valid) => {
-                if (valid) {
-                    this.$http.post('/api/login', this.ruleForm2).then(response => {
-                        let userInfo = JSON.stringify(response.body);
-                        if (userInfo !== 'null') {
-                            localStorage.setItem('user', userInfo);
-                            // this.$store.commit('login');
-                            this.$router.push({path: '/general'});
-                        } else {
-                            this.$message.error('用户不存在');
-                            // this.$store.commit('notLogin');
-                        }
-                    }, response => {
-                        // error callback
-                    });
+            if (!this.path) {
+                this.$message.error('请选择账户文件');
+                return false;
+            } else {
+                this.$refs[formName].validate((valid) => {
+                    if (valid && sessionStorage.getItem('user')) {
+                        this.$router.push('/general/balance');
+                    } else {
+                        console.log('error submit');
+                        return false;
+                    }
+                });
+            }
+        },
+        showDialog: function () {
+            this.$GLOBAL.ipc.send('open-dialog');
+            this.$GLOBAL.ipc.on('in-open', (event, paths) => {
+                if (paths.length) {
+                    this.path = paths[0];
                 } else {
-                    console.log('error submit!!');
-                    return false;
+                    this.$message.error('请选择账户文件');
                 }
             });
         },

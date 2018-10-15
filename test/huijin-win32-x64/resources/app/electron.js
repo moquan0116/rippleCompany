@@ -2,6 +2,10 @@
 const {app, BrowserWindow} = require('electron')
 const url = require('url')
 const path = require('path')
+const ipc = require('electron').ipcMain
+const dialog = require('electron').dialog
+const fs = require('fs');
+const crypto = require('crypto');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -9,7 +13,7 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({width: 1100, height: 800});
 
   // and load the index.html of the app.
   // mainWindow.loadFile('index.html')
@@ -18,8 +22,10 @@ function createWindow () {
       protocol: 'file:',
       slashes: true
   }))
+
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -27,7 +33,10 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null
-  })
+  });
+    ipc.on('vue-init', (event) => {
+        event.sender.send('init')
+    })
 }
 
 // This method will be called when Electron has finished
@@ -54,3 +63,103 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+testSaveTxt();
+testOpenTxt();
+decryptFile();
+function testSaveTxt() {
+    ipc.on('save-dialog', (event, _file) => {
+        let base = app.getPath('home');
+        const options = {
+            title: '保存文件',
+            defaultPath: base+'\\'+_file,
+            filters: [
+                {name: 'Custom File Type', extensions: ['txt']}
+            ]
+        }
+        dialog.showSaveDialog(options, (filename) => {
+            event.sender.send('in-reg', filename)
+        })
+    })
+
+    ipc.on('encrypt-ripple', (event, data)=>{
+        writeFile(data);
+    })
+}
+function testOpenTxt() {
+    ipc.on('open-dialog', (event) => {
+        let base = app.getPath('home');
+        const options = {
+            title: '打开文件',
+            defaultPath: base,
+            properties: ['openFile'],
+            filters: [
+                {name: 'Custom File Type', extensions: ['txt']},
+            ]
+        }
+        dialog.showOpenDialog(options, (filePaths ) => {
+            event.sender.send('in-open', filePaths);
+        })
+    })
+}
+function decryptFile() {
+    ipc.on('decrypt', (event, data) => {
+        let read = readFile(data.path);
+        read.then(function (res) {
+            return res;
+        }).then(function (res) {
+            event.sender.send('decrypt-ok', aesDecrypt(res, data.pwd));
+        }).catch(function (err) {
+            console.log(err);
+        });
+    })
+}
+
+function readFile(fileName){
+    return new Promise(function (resolve, reject) {
+        fs.readFile(fileName, 'utf-8', function(err, data) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+
+}
+
+function writeFile(data) {
+    let encText = aesEncrypt(data.account, data.pwd)
+    fs.writeFile(data.file, encText, (err) => {
+        if (err) throw err;
+        return true;
+    });
+    return false;
+}
+
+//加密
+function aesEncrypt(data, key) {
+    const cipher = crypto.createCipher('aes192', key);
+    let crypted = cipher.update(data, 'utf8', 'hex');
+    crypted += cipher.final('hex');
+    return crypted;
+}
+//解密
+function aesDecrypt(encrypted, key) {
+    const decipher = crypto.createDecipher('aes192', key);
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    try {
+        return decrypted += decipher.final('utf8');
+    } catch (err) {
+        // console.error('Authentication failed!'+err);
+        return false;
+    }
+}
+function aesDecryptPro(encrypted, key) {
+    return new Promise(function (resolve, reject) {
+        const decipher = crypto.createDecipher('aes192', key);
+        let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+        decrypted += decipher.final('utf8');
+        resolve(decrypted);
+    });
+}
+

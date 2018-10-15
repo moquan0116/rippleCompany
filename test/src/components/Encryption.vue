@@ -38,7 +38,7 @@
                     你是否已保存好秘钥？
                 </el-form-item>
                 <el-form-item label="">
-                    <el-button type="primary">我已保存好了</el-button>
+                    <el-button @click="saveOk" type="primary">我已保存好了</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -121,6 +121,11 @@ export default {
             }, response => {
                 // error callback
             });
+        },
+        saveOk: function () {
+            console.log(this.account);
+            sessionStorage.setItem('user', JSON.stringify(this.account));
+            this.$router.push('/general/balance');
         },
         formatOut: function (data, start) {
             start = start || 0;

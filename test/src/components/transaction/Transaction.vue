@@ -1,7 +1,7 @@
 <template>
 <div class="transaction">
     <NavTwo></NavTwo>
-    <div class="container-fluid" style="margin-top: 1em;min-height: 55em">
+    <div class="container-fluid" style="margin-top: 1em;">
         <div class="container">
             <router-view></router-view>
         </div>

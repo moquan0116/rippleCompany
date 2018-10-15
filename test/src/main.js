@@ -23,7 +23,7 @@ Vue.config.productionTip = false;
 
 // const walletAddress = 'rU7xCqQeHURdPDzhE2NQ1U4XBjpDpUyFJQ';
 // const walletAddress = 'rKoNYSwjt78AXCKVT7Y5PaaPfBpRgcWw25';
-/* let userInfo = JSON.parse(localStorage.getItem('user'));
+/* let userInfo = JSON.parse(sessionStorage.getItem('user'));
 let walletAddress = userInfo === null ? 'null' : userInfo.address;
 let secret = userInfo === null ? 'null' : userInfo.secret; */
 // const secret = 'saD2EdEsCuD7YiQ9Sbw9DJuwTwYTL';
@@ -43,6 +43,10 @@ Vue.prototype.getRippleApi = function Ripple () {
     }
 };
 Vue.prototype.$GLOBAL = Global;
+Global.ipc.send('vue-init');
+Global.ipc.on('init', (event) => {
+    sessionStorage.removeItem('user');
+});
 
 Vue.prototype.dateFormat = function (dateString, type, pattern = 'YYYY-MM-DD HH:mm:ss') {
     if (type === 'UTC') {
@@ -54,7 +58,7 @@ Vue.prototype.dateFormat = function (dateString, type, pattern = 'YYYY-MM-DD HH:
 };
 
 router.beforeEach((to, from, next) => {
-    let login = localStorage.getItem('user');
+    let login = sessionStorage.getItem('user');
     let path = to.path;
     if (path === '/login') {
         next();

@@ -73,7 +73,7 @@ export default {
             },
             currTopItemChild: [],
             rip: '',
-            user: JSON.parse(localStorage.getItem('user')).address
+            user: JSON.parse(sessionStorage.getItem('user')).address
         };
     },
     methods: {
@@ -87,7 +87,7 @@ export default {
             }
         },
         logOut: function () {
-            localStorage.removeItem('user');
+            sessionStorage.removeItem('user');
             this.$router.push({path: '/login'});
         }
     },

@@ -36,7 +36,7 @@ export default {
             console.log('disconnected, code:', code);
         });
         api.connect().then(function () {
-            return api.getAccountInfo(JSON.parse(localStorage.getItem('user')).address);
+            return api.getAccountInfo(JSON.parse(sessionStorage.getItem('user')).address);
         }).then(function (accountInfo) {
             self.accountInfo = [
                 {'title': '序列', 'item': accountInfo.sequence},

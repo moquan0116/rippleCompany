@@ -59,8 +59,8 @@ export default {
     data () {
         return {
             tran: {},
-            walletAddress: JSON.parse(localStorage.getItem('user')).address,
-            secret: JSON.parse(localStorage.getItem('user')).secret,
+            walletAddress: JSON.parse(sessionStorage.getItem('user')).address,
+            secret: JSON.parse(sessionStorage.getItem('user')).secret,
             toAddress: '',
             currency: 'XRP',
             amount: 1,

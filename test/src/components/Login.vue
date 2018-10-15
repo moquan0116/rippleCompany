@@ -78,15 +78,12 @@ export default {
     font-size: 3em;
     letter-spacing: 0.1em;
 }
-.login-main{
-    min-height: 50em;
-}
 .alert-info p{
     text-indent: 2em;
 }
 .lr-box{
     /*width: 45%;*/
-    min-height: 40em !important;
-    margin: 7% auto auto auto;
+    /*min-height: 40em !important;*/
+    margin: 1% auto 3% auto;
 }
 </style>

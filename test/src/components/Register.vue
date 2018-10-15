@@ -90,7 +90,7 @@ export default {
                         let userInfo = JSON.stringify(response.body);
                         console.log(userInfo);
                         if (userInfo !== 'null') {
-                            localStorage.setItem('user', userInfo);
+                            sessionStorage.setItem('user', userInfo);
                             // this.$store.commit('login');
                             this.$router.push({path: '/general'});
                         } else {

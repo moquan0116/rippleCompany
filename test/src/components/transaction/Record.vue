@@ -148,8 +148,8 @@ export default {
     name: 'Record',
     data () {
         return {
-            walletAddress: JSON.parse(localStorage.getItem('user')).address,
-            secret: JSON.parse(localStorage.getItem('user')).password,
+            walletAddress: JSON.parse(sessionStorage.getItem('user')).address,
+            secret: JSON.parse(sessionStorage.getItem('user')).password,
             firstTran: '',
             lastTran: '',
             lastIndex: 0,
