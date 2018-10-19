@@ -47,7 +47,7 @@ export default {
                 this.$GLOBAL.ipc.send('decrypt', {path: this.path, pwd: this.ruleForm2.password});
                 this.$GLOBAL.ipc.on('decrypt-ok', (event, res) => {
                     if (res) {
-                        sessionStorage.setItem('user', res);
+                        this.$store.commit('login', JSON.parse(res));
                         callback();
                     } else {
                         callback(new Error('密码错误'));
@@ -75,7 +75,19 @@ export default {
                 return false;
             } else {
                 this.$refs[formName].validate((valid) => {
-                    if (valid && sessionStorage.getItem('user')) {
+                    if (valid && this.$store.state.login === true) {
+                        const self = this;
+                        const api = this.getRippleApi();
+                        api.connect().then(function () {
+                            api.getAccountInfo(self.$store.state.account.address);
+                            self.$store.commit('activated');
+                        }).catch(function (error) {
+                            if (error instanceof api.errors.RippledError) {
+                                console.log('没有找到用户');
+                                self.$store.commit('notActivated');
+                            }
+                            return error;
+                        });
                         this.$router.push('/general/balance');
                     } else {
                         console.log('error submit');

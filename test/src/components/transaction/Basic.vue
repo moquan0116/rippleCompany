@@ -59,11 +59,11 @@ export default {
     data () {
         return {
             tran: {},
-            walletAddress: JSON.parse(sessionStorage.getItem('user')).address,
-            secret: JSON.parse(sessionStorage.getItem('user')).secret,
+            walletAddress: this.$store.state.account.address,
+            secret: this.$store.state.account.secret,
             toAddress: '',
             currency: 'XRP',
-            amount: 1,
+            amount: '1',
             api: this.getRippleApi(),
             msg: {},
             flag: 'info'
@@ -137,7 +137,9 @@ export default {
             });
         },
         submit: function () {
-            var payment = {
+            console.log(1111, typeof this.amount);
+            console.log(this.amount, 2222);
+            let payment = {
                 source: {
                     address: this.walletAddress,
                     maxAmount: {
@@ -153,6 +155,7 @@ export default {
                     }
                 }
             };
+            console.log(payment);
             this.api.connect().then(() => {
                 this.msg = {
                     'success': '连接服务器成功！'
@@ -171,9 +174,6 @@ export default {
                 // console.log(signed);
             }).catch(console.error);
         }
-    },
-    created: function () {
-
     }
 };
 </script>

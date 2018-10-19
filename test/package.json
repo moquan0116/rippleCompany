@@ -14,7 +14,7 @@
     "build": "node build/build.js",
     "server": "node server/index.js",
     "electron_dev": "npm run build && electron build/electron.js",
-    "electron_build": "electron-packager ./dist huijin --platform=win32 --arch=x64 --overwrite",
+    "electron_build": "electron-packager ./dist huijin --platform=win32 --icon=./dist/h.ico --arch=x64 --overwrite",
     "electron": "electron build/electron.js"
   },
   "dependencies": {
@@ -58,6 +58,7 @@
     "copy-webpack-plugin": "^4.0.1",
     "cross-spawn": "^5.0.1",
     "css-loader": "^0.28.0",
+    "devtron": "^1.4.0",
     "electron": "^3.0.3",
     "electron-packager": "^12.2.0",
     "eslint": "^4.15.0",

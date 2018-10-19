@@ -2,6 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
 import App from './App';
+import components from './components/Common/components.js';
 import router from './router';
 import store from './store';
 import VueResource from 'vue-resource';
@@ -17,7 +18,7 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
 import Global from './components/Global';
-
+Vue.use(components);
 Vue.use(ElementUI);
 Vue.config.productionTip = false;
 
@@ -28,8 +29,8 @@ let walletAddress = userInfo === null ? 'null' : userInfo.address;
 let secret = userInfo === null ? 'null' : userInfo.secret; */
 // const secret = 'saD2EdEsCuD7YiQ9Sbw9DJuwTwYTL';
 // const secret = 'ssGE93bKwjHL1ypp5BRvQeZG4sEys';
-const rippleTest = 'wss://s.altnet.rippletest.net:51233';
-// const rippleTest = 'wss://s1.ripple.com:443';
+// const rippleTest = 'wss://s.altnet.rippletest.net:51233';
+const rippleOfficial = 'wss://s1.ripple.com:443';
 Vue.use(VueResource);
 
 /* 在vue中增加一个获取RippleApi的方法 *81F5E21E35407D884A6CD4A731AEBFB6AF209E1B */
@@ -38,15 +39,11 @@ Vue.prototype.getRippleApi = function Ripple () {
     if (Ripple.instance !== undefined) {
         return Ripple.instance;
     } else {
-        Ripple.instance = new RippleAPI({server: rippleTest});
+        Ripple.instance = new RippleAPI({server: rippleOfficial});
         return Ripple.instance;
     }
 };
 Vue.prototype.$GLOBAL = Global;
-Global.ipc.send('vue-init');
-Global.ipc.on('init', (event) => {
-    sessionStorage.removeItem('user');
-});
 
 Vue.prototype.dateFormat = function (dateString, type, pattern = 'YYYY-MM-DD HH:mm:ss') {
     if (type === 'UTC') {
@@ -58,14 +55,14 @@ Vue.prototype.dateFormat = function (dateString, type, pattern = 'YYYY-MM-DD HH:
 };
 
 router.beforeEach((to, from, next) => {
-    let login = sessionStorage.getItem('user');
+    let login = store.state.login;
     let path = to.path;
     if (path === '/login') {
         next();
         return;
     }
 
-    if (login === null || login === '') {
+    if (login === false || login === '') {
         next({
             path: '/login'
         });
@@ -84,10 +81,7 @@ new Vue({
     data: {
         currentRoute: window.location.pathname,
         rip: {
-            RippleAPI: RippleAPI,
-            /* walletAddress: walletAddress,
-            secret: secret, */
-            rippleTest: rippleTest
+            RippleAPI: RippleAPI
         }
     },
     router,

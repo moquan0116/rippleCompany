@@ -148,8 +148,8 @@ export default {
     name: 'Record',
     data () {
         return {
-            walletAddress: JSON.parse(sessionStorage.getItem('user')).address,
-            secret: JSON.parse(sessionStorage.getItem('user')).password,
+            walletAddress: this.$store.state.account.address,
+            secret: this.$store.state.account.secret,
             firstTran: '',
             lastTran: '',
             lastIndex: 0,
@@ -184,15 +184,6 @@ export default {
         RecordInfo
     },
     methods: {
-        prev: function () {
-            this.isLoading = true;
-            // console.log(this.firstTran);
-            this.getTrans(this.firstTran);
-        },
-        next: function () {
-            this.isLoading = true;
-            this.getTrans(this.lastTran);
-        },
         getTrans: function (params) {
             const self = this;
             const api = this.getRippleApi();
@@ -232,7 +223,7 @@ export default {
             }).catch(function (error) {
                 // 需要指定版本范围 minLedgerVersion  maxLedgerVersion
                 if (error instanceof api.errors.MissingLedgerHistoryError) {
-                    var ledgers = self.serverInfo.completeLedgers.split('-');
+                    let ledgers = self.serverInfo.completeLedgers.split('-');
                     self.tranParams.minLedgerVersion = parseInt(ledgers[0]);
                     self.tranParams.maxLedgerVersion = parseInt(ledgers[1]);
                     setTimeout(self.getTran(self.tranParams), 1000);
@@ -359,14 +350,6 @@ export default {
             this.appendTableData = [];
             this.tranParams['start'] = this.lastTran;
             this.getTrans(this.tranParams);
-        },
-        utcToLocal (row, column, cellValue, index) {
-            console.log(cellValue);
-        }
-    },
-    watch: {
-        '$router': function (to, from) {
-            console.log(to);
         }
     },
     created: function () {

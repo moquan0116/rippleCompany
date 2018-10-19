@@ -25,9 +25,6 @@ export default {
             isShow: false
         };
     },
-    created: function () {
-
-    },
     components: {
         Encryption
     },
@@ -39,14 +36,6 @@ export default {
                     this.isShow = true;
                     this.path = path;
                 }
-            });
-        },
-        GenerateAccount: function () {
-            const rippletest = 'https://faucet.altnet.rippletest.net/accounts';
-            this.$http.post(rippletest).then(response => {
-                this.account = response.body.account;
-            }, response => {
-                // error callback
             });
         }
     }

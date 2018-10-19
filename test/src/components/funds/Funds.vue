@@ -3,7 +3,8 @@
     <NavTwo></NavTwo>
     <div class="container-fluid" style="margin-top: 1em;min-height: 55em">
         <div class="container">
-            <router-view></router-view>
+            <Hint v-if="$store.state.accountActivated === false"></Hint>
+            <router-view v-else></router-view>
         </div>
     </div>
     <Footer></Footer>
@@ -11,14 +12,8 @@
 </template>
 
 <script>
-import NavTwo from '../NavTwo';
-import Footer from '../Footer';
 export default {
-    name: 'Funds',
-    components: {
-        NavTwo,
-        Footer
-    }
+    name: 'Funds'
 };
 </script>
 

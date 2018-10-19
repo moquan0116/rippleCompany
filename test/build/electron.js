@@ -17,14 +17,15 @@ function createWindow () {
 
   // and load the index.html of the app.
   // mainWindow.loadFile('index.html')
-  mainWindow.loadURL(url.format({
+  /*mainWindow.loadURL(url.format({
       pathname: path.join(__dirname, '../dist/index.html'),
       protocol: 'file:',
       slashes: true
-  }))
+  }))*/
+  mainWindow.loadURL('http://192.168.124.5:8080');
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
   //mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.

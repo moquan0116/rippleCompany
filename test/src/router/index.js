@@ -68,7 +68,7 @@ export default new Router({
             name: 'Funds',
             component: Funds,
             children: [
-                {path: '', component: NotFound}
+                {path: '', component: () => import('@/components/funds/index')}
             ]
         }
     ]

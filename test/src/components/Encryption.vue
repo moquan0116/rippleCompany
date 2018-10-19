@@ -96,7 +96,7 @@ export default {
         submitForm (formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    this.GenerateAccount();
+                    this.GenerateAccountTest();
                 } else {
                     console.log('error submit!!');
                     return false;
@@ -106,7 +106,7 @@ export default {
         resetForm (formName) {
             this.$refs[formName].resetFields();
         },
-        GenerateAccount: function () {
+        GenerateAccountTest: function () {
             const rippletest = 'https://faucet.altnet.rippletest.net/accounts';
             this.$http.post(rippletest).then(response => {
                 this.$GLOBAL.ipc.send('encrypt-ripple', {
@@ -122,9 +122,26 @@ export default {
                 // error callback
             });
         },
+        GenerateAccount: function () {
+            const api = this.getRippleApi();
+            const that = this;
+            api.connect().then(function () {
+                return api.generateAddress();
+            }).then(function (account) {
+                that.$GLOBAL.ipc.send('encrypt-ripple', {
+                    file: that.$props.path,
+                    pwd: that.ruleForm2.pass,
+                    account: JSON.stringify(account)
+                });
+                that.account = account;
+                that.formatPass = that.formatOut(that.ruleForm2.pass);
+                that.formatSecret = that.formatOut(that.account.secret, 1);
+                that.status = true;
+            }).catch(console.error);
+        },
         saveOk: function () {
-            console.log(this.account);
-            sessionStorage.setItem('user', JSON.stringify(this.account));
+            this.$store.commit('login', this.account);
+            this.$store.commit('notActivated');
             this.$router.push('/general/balance');
         },
         formatOut: function (data, start) {
