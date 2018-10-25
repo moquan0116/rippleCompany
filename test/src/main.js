@@ -17,7 +17,7 @@ import Moment from 'moment';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
-import Global from './components/Global';
+import Global from './components/Common/Global';
 Vue.use(components);
 Vue.use(ElementUI);
 Vue.config.productionTip = false;

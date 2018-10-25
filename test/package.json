@@ -28,6 +28,7 @@
     "mysql": "^2.16.0",
     "mysql2": "^1.6.1",
     "path": "^0.12.7",
+    "ripple-keypairs": "^0.10.1",
     "ripple-lib": "^1.0.0",
     "sequelize": "^4.39.0",
     "vue": "^2.5.2",

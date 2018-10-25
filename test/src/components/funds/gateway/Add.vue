@@ -16,7 +16,7 @@
           </el-form-item>
           <el-form-item>
               <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
-              <el-button @click="resetForm('ruleForm2')">重置</el-button>
+              <el-button @click="resetForm('ruleForm2')">取消</el-button>
           </el-form-item>
       </el-form>
       <div class="row mtop-1em" v-if="Object.keys(msg).length">
@@ -29,7 +29,7 @@
 
 <script>
 export default {
-    name: 'Gateway',
+    name: 'Add',
     data () {
         return {
             address: this.$store.state.account.address,
@@ -69,6 +69,7 @@ export default {
         },
         resetForm (formName) {
             this.$refs[formName].resetFields();
+            this.$emit('add');
         },
         setTrustlines () {
             this.api.connect().then(() => {
@@ -153,15 +154,6 @@ export default {
                 return error;
             });
         }
-    },
-    created: function () {
-        const ripple = this.getRippleApi();
-        const that = this;
-        ripple.connect().then(function () {
-            ripple.getTrustlines(that.$store.state.account.address).then(function (trustlines) {
-                console.log(trustlines);
-            });
-        });
     }
 };
 </script>

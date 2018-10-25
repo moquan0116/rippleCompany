@@ -13,8 +13,8 @@ import RecordInfo from '@/components/transaction/RecordInfo';
 
 import Funds from '@/components/funds/Funds';
 
-import NotFound from '@/components/NotFound';
-import Login from '@/components/Login';
+import NotFound from '@/components/Error/NotFound';
+import Login from '@/components/Login/Login';
 
 Vue.use(Router);
 

@@ -1,21 +1,32 @@
 <template>
     <div class="row">
-        <div class="login-form" v-if="status === false">
+        <div class="fill-secret" v-if="show === false">
             <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
-                <el-form-item label="加密文件:">{{path}}</el-form-item>
-                <el-form-item label="密码" prop="pass">
-                    <el-input type="password" v-model="ruleForm2.pass" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="确认密码" prop="checkPass">
-                    <el-input type="password" v-model="ruleForm2.checkPass" autocomplete="off"></el-input>
+                <el-form-item label="秘钥" prop="secret">
+                    <el-input type="text" v-model="ruleForm2.secret" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="submitForm('ruleForm2')">加密文件</el-button>
-                    <el-button @click="resetForm('ruleForm2')">取消并删除文件</el-button>
+                    <el-button type="primary" @click="submitForm('ruleForm2')">创建账户</el-button>
+                    <el-button @click="resetForm('ruleForm2')">取消</el-button>
                 </el-form-item>
             </el-form>
         </div>
-        <div class="login-form login-dialog" v-else>
+        <div class="fill-pass" v-else-if="show === 1">
+            <el-form :model="fillPass" status-icon :rules="fillPassRules" ref="fillPass" label-width="100px" class="demo-ruleForm">
+                <el-form-item label="加密文件:">{{pathS}}</el-form-item>
+                <el-form-item label="密码" prop="pass">
+                    <el-input type="password" v-model="fillPass.pass" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="确认密码" prop="checkPass">
+                    <el-input type="password" v-model="fillPass.checkPass" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="submitfillForm('fillPass')">加密文件</el-button>
+                    <el-button @click="resetForm('fillPass')">取消并删除文件</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="login-form login-dialog" v-else-if="show === 2">
             <el-form label-width="100px" class="demo-ruleForm">
                 <el-form-item label="重要信息:">
                     <span style="text-indent: 2em">
@@ -48,8 +59,7 @@
 
 <script>
 export default {
-    name: 'Encryption',
-    props: ['path'],
+    name: 'SeedEncryption',
     data () {
         let validatePass = (rule, value, callback) => {
             if (value === '') {
@@ -64,7 +74,7 @@ export default {
         let validatePass2 = (rule, value, callback) => {
             if (value === '') {
                 callback(new Error('请再次输入密码'));
-            } else if (value !== this.ruleForm2.pass) {
+            } else if (value !== this.fillPass.pass) {
                 callback(new Error('两次输入密码不一致!'));
             } else {
                 callback();
@@ -72,10 +82,18 @@ export default {
         };
         return {
             ruleForm2: {
+                secret: ''
+            },
+            rules2: {
+                secret: [
+                    { require: true, trigger: 'blur' }
+                ]
+            },
+            fillPass: {
                 pass: '',
                 checkPass: ''
             },
-            rules2: {
+            fillPassRules: {
                 pass: [
                     { validator: validatePass, trigger: 'blur' }
                 ],
@@ -83,7 +101,9 @@ export default {
                     { validator: validatePass2, trigger: 'blur' }
                 ]
             },
-            status: false,
+            pathS: '',
+            defaultFileName: 'huijin.txt',
+            show: false,
             formatPass: '',
             formatSecret: '',
             secretShow: false,
@@ -93,10 +113,20 @@ export default {
         };
     },
     methods: {
+        submitfillForm (formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    this.GenerateAccount();
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+        },
         submitForm (formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    this.GenerateAccountTest();
+                    this.showDialog();
                 } else {
                     console.log('error submit!!');
                     return false;
@@ -105,39 +135,34 @@ export default {
         },
         resetForm (formName) {
             this.$refs[formName].resetFields();
+            this.$emit('off');
         },
-        GenerateAccountTest: function () {
-            const rippletest = 'https://faucet.altnet.rippletest.net/accounts';
-            this.$http.post(rippletest).then(response => {
-                this.$GLOBAL.ipc.send('encrypt-ripple', {
-                    file: this.$props.path,
-                    pwd: this.ruleForm2.pass,
-                    account: JSON.stringify(response.body.account)
-                });
-                this.account = response.body.account;
-                this.formatPass = this.formatOut(this.ruleForm2.pass);
-                this.formatSecret = this.formatOut(this.account.secret, 1);
-                this.status = true;
-            }, response => {
-                // error callback
+        showDialog: function () {
+            this.$GLOBAL.ipc.send('save-dialog', this.defaultFileName);
+            this.$GLOBAL.ipc.on('in-reg', (event, path) => {
+                if (path) {
+                    this.show = 1;
+                    this.pathS = path;
+                }
             });
         },
         GenerateAccount: function () {
-            const api = this.getRippleApi();
-            const that = this;
-            api.connect().then(function () {
-                return api.generateAddress();
-            }).then(function (account) {
-                that.$GLOBAL.ipc.send('encrypt-ripple', {
-                    file: that.$props.path,
-                    pwd: that.ruleForm2.pass,
-                    account: JSON.stringify(account)
-                });
-                that.account = account;
-                that.formatPass = that.formatOut(that.ruleForm2.pass);
-                that.formatSecret = that.formatOut(that.account.secret, 1);
-                that.status = true;
-            }).catch(console.error);
+            this.$GLOBAL.ipc.send('seedWallet', {
+                file: this.pathS,
+                pwd: this.fillPass.pass,
+                secret: this.ruleForm2.secret
+            });
+            this.$GLOBAL.ipc.on('seedWalletCreateOk', (event, response) => {
+                let account = JSON.parse(response);
+                if (account) {
+                    this.show = 2;
+                    this.account = account.account;
+                    this.formatPass = this.formatOut(this.fillPass.pass);
+                    this.formatSecret = this.formatOut(this.account.secret, 1);
+                } else {
+                    this.$message.error('操作失败');
+                }
+            });
         },
         saveOk: function () {
             this.$store.commit('login', this.account);
@@ -172,10 +197,10 @@ export default {
         showPass: function () {
             if (this.passShow) {
                 this.btnPassText = '显示';
-                this.formatPass = this.formatOut(this.ruleForm2.pass);
+                this.formatPass = this.formatOut(this.fillPass.pass);
             } else {
                 this.btnPassText = '隐藏';
-                this.formatPass = this.ruleForm2.pass;
+                this.formatPass = this.fillPass.pass;
             }
             this.passShow = !this.passShow;
         }

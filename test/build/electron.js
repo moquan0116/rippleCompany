@@ -6,6 +6,7 @@ const ipc = require('electron').ipcMain
 const dialog = require('electron').dialog
 const fs = require('fs');
 const crypto = require('crypto');
+const keypairs = require('ripple-keypairs');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -85,6 +86,19 @@ function testSaveTxt() {
     ipc.on('encrypt-ripple', (event, data)=>{
         writeFile(data);
     })
+    ipc.on('seedWallet', (event, data)=>{
+        let account = createWalletFromSeed(data.secret);
+        data.account = account;
+        writeFile(data).then(function (res) {
+            console.log(res);
+            event.sender.send('seedWalletCreateOk', JSON.stringify(res));
+        }).catch(function (err) {
+            if(err){
+                event.sender.send('seedWalletCreateOk', -1);
+            }
+        })
+    })
+
 }
 function testOpenTxt() {
     ipc.on('open-dialog', (event) => {
@@ -129,12 +143,16 @@ function readFile(fileName){
 }
 
 function writeFile(data) {
-    let encText = aesEncrypt(data.account, data.pwd)
-    fs.writeFile(data.file, encText, (err) => {
-        if (err) throw err;
-        return true;
+    let encText = aesEncrypt(JSON.stringify(data.account), data.pwd);
+    return new Promise(function (resolve, reject) {
+        fs.writeFile(data.file, encText,(err) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
     });
-    return false;
 }
 
 //加密
@@ -162,5 +180,14 @@ function aesDecryptPro(encrypted, key) {
         decrypted += decipher.final('utf8');
         resolve(decrypted);
     });
+}
+
+function createWalletFromSeed(secret) {
+    const keypair = keypairs.deriveKeypair(secret);
+    const address = keypairs.deriveAddress(keypair.publicKey);
+    return {
+        address,
+        secret
+    };
 }
 

@@ -3,9 +3,9 @@
       <el-container>
           <el-aside style="width: 20em" :class="{rightLint: currentTab === 'XRP'}">
               <div
-                      v-for="tab in tabs"
-                      v-bind:key="tab"
-                      v-on:click="currentTab = tab"
+                  v-for="tab in tabs"
+                  v-bind:key="tab"
+                  v-on:click="currentTab = tab"
               >
                   <el-row class="not-Margin-leftRight margin-topBom">
                       <el-col :span="22">
@@ -26,8 +26,8 @@
 </template>
 
 <script>
-import Gateway from './Gateway';
-import XRP from './XRP';
+import Gateway from './gateway/Index';
+import XRP from './xrp/Index';
 export default {
     name: 'Index',
     data () {
