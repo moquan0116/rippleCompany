@@ -49,7 +49,7 @@ export default new Router({
             name: 'Send',
             component: Send,
             children: [
-                {path: '', component: NotFound}
+                {path: '', component: () => import('@/components/send/index')}
             ]
         },
         {
@@ -60,7 +60,8 @@ export default new Router({
             children: [
                 {path: 'basic', component: Basic},
                 {path: 'record', component: Record},
-                {path: 'recordInfo', component: RecordInfo}
+                {path: 'recordInfo', component: RecordInfo},
+                {path: 'Advanced', component: () => import('@/components/transaction/Advanced')}
             ]
         },
         {

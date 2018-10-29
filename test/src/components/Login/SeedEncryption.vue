@@ -165,8 +165,22 @@ export default {
             });
         },
         saveOk: function () {
-            this.$store.commit('login', this.account);
-            this.$store.commit('notActivated');
+            let account = this.account;
+            console.log(account);
+            const self = this;
+            const ripple = this.getRippleApi();
+            ripple.connect().then(function () {
+                return ripple.getAccountInfo(account.address);
+            }).then(function (info) {
+                account.extend = info;
+                self.$store.commit('login', account);
+            }).catch(function (error) {
+                if (error instanceof ripple.errors.RippledError) {
+                    console.log('没有找到用户');
+                    self.$store.commit('notActivated');
+                }
+                return error;
+            });
             this.$router.push('/general/balance');
         },
         formatOut: function (data, start) {

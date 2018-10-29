@@ -44,15 +44,8 @@ export default {
             if (value === '') {
                 callback(new Error('请输入密码'));
             } else {
-                this.$GLOBAL.ipc.send('decrypt', {path: this.path, pwd: this.ruleForm2.password});
-                this.$GLOBAL.ipc.on('decrypt-ok', (event, res) => {
-                    if (res) {
-                        this.$store.commit('login', JSON.parse(res));
-                        callback();
-                    } else {
-                        callback(new Error('密码错误'));
-                    }
-                });
+                console.log('valiPass');
+                this.getDecryptContent(callback);
             }
         };
         return {
@@ -70,31 +63,57 @@ export default {
     },
     methods: {
         submitForm (formName) {
+            const that = this;
             if (!this.path) {
                 this.$message.error('请选择账户文件');
                 return false;
             } else {
                 this.$refs[formName].validate((valid) => {
-                    if (valid && this.$store.state.login === true) {
-                        const self = this;
-                        const api = this.getRippleApi();
-                        api.connect().then(function () {
-                            api.getAccountInfo(self.$store.state.account.address);
-                            self.$store.commit('activated');
-                        }).catch(function (error) {
-                            if (error instanceof api.errors.RippledError) {
-                                console.log('没有找到用户');
-                                self.$store.commit('notActivated');
+                    if (valid) {
+                        setTimeout(function () {
+                            if (that.$store.state.login === true) {
+                                that.$router.push('/general/balance');
                             }
-                            return error;
-                        });
-                        this.$router.push('/general/balance');
+                        }, 1000);
                     } else {
                         console.log('error submit');
                         return false;
                     }
                 });
             }
+        },
+        getAccountInfo: function (params) {
+            const address = params.address || this.$store.state.account.address;
+            const self = this;
+            const ripple = this.getRippleApi();
+            ripple.connect().then(function () {
+                return ripple.getAccountInfo(address);
+            }).then(function (info) {
+                console.log('info-ok');
+                params.extend = info;
+                self.$store.commit('login', params);
+            }).catch(function (error) {
+                if (error instanceof ripple.errors.RippledError) {
+                    console.log('没有找到用户');
+                    self.$store.commit('notActivated');
+                }
+                return error;
+            });
+        },
+        getDecryptContent: function (callback) {
+            this.$GLOBAL.ipc.send('decrypt', {
+                path: this.path,
+                pwd: this.ruleForm2.password
+            });
+            this.$GLOBAL.ipc.on('decrypt-ok', (event, res) => {
+                console.log('decrypt-ok');
+                if (res) {
+                    this.getAccountInfo(JSON.parse(res));
+                    callback();
+                } else {
+                    callback(new Error('密码错误'));
+                }
+            });
         },
         showDialog: function () {
             this.$GLOBAL.ipc.send('open-dialog');

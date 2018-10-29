@@ -10,6 +10,9 @@ const state = {
 };
 const mutations = {
     login (state, account) {
+        if (account.extend.xrpBalance < 20) {
+            state.accountActivated = false;
+        }
         state.account = account;
         state.login = true;
     },
