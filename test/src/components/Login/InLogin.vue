@@ -85,8 +85,8 @@ export default {
         getAccountInfo: function (params) {
             const address = params.address || this.$store.state.account.address;
             const self = this;
-            const ripple = this.getRippleApi();
-            ripple.connect().then(function () {
+            const ripple = this.getRippleApi;
+            ripple.connect().then(() => {
                 return ripple.getAccountInfo(address);
             }).then(function (info) {
                 console.log('info-ok');
@@ -97,6 +97,7 @@ export default {
                     console.log('没有找到用户');
                     self.$store.commit('notActivated');
                 }
+                console.log(error);
                 return error;
             });
         },

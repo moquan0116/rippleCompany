@@ -84,7 +84,7 @@ export default {
     methods: {
         getOrderBook: function () {
             const that = this;
-            const ripple = this.getRippleApi();
+            const ripple = this.getRippleApi;
             ripple.connect().then(function () {
                 const address = that.$store.state.account.address;
                 const orderbook = {
@@ -104,7 +104,7 @@ export default {
             });
         },
         getTrustlines: function () {
-            const ripple = this.getRippleApi();
+            const ripple = this.getRippleApi;
             const that = this;
             ripple.connect().then(function () {
                 ripple.getTrustlines(that.$store.state.account.address).then(function (trustlines) {

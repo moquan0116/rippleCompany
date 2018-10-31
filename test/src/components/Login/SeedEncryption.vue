@@ -168,7 +168,7 @@ export default {
             let account = this.account;
             console.log(account);
             const self = this;
-            const ripple = this.getRippleApi();
+            const ripple = this.getRippleApi;
             ripple.connect().then(function () {
                 return ripple.getAccountInfo(account.address);
             }).then(function (info) {

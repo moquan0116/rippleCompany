@@ -39,7 +39,7 @@ export default {
     },
     created: function () {
         this.test = 1;
-        const ripple = this.getRippleApi();
+        const ripple = this.getRippleApi;
         const that = this;
         ripple.connect().then(function () {
             ripple.getTrustlines(that.$store.state.account.address).then(function (trustlines) {

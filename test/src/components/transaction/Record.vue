@@ -186,7 +186,7 @@ export default {
     methods: {
         getTrans: function (params) {
             const self = this;
-            const api = this.getRippleApi();
+            const api = this.getRippleApi;
             api.connect().then(function () {
                 return api.getServerInfo().then(info => {
                     self.serverInfo = info;
@@ -214,7 +214,7 @@ export default {
         },
         getTran: function (params) {
             const self = this;
-            const api = this.getRippleApi();
+            const api = this.getRippleApi;
             api.connect().then(function () {
                 return api.getTransaction(params);
             }).then(function (tranInfo) {

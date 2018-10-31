@@ -25,7 +25,7 @@ export default {
     },
     created: function () {
         const self = this;
-        const api = this.getRippleApi();
+        const api = this.getRippleApi;
         api.on('error', (errorCode, errorMessage) => {
             console.log(errorCode + ': ' + errorMessage);
         });

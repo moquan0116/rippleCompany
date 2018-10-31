@@ -136,7 +136,7 @@ export default {
                 return error;
             });
         },
-        submitBak: function () {
+        submit: function () {
             console.log(1111, typeof this.amount);
             console.log(this.amount, 2222);
             let payment = {
@@ -173,48 +173,7 @@ export default {
             }).then((signed) => {
                 // console.log(signed);
             }).catch(console.error);
-        },
-        submit: function () {
-            console.log(1111, typeof this.amount);
-            console.log(this.amount, 2222);
-            let payment = {
-                source: {
-                    address: this.walletAddress,
-                    maxAmount: {
-                        value: this.amount,
-                        currency: this.currency
-                    }
-                },
-                destination: {
-                    address: this.toAddress,
-                    amount: {
-                        value: this.amount,
-                        currency: this.currency
-                    }
-                }
-            };
-            console.log(payment);
-            let ripple = this.getRippleApi;
-            console.log(ripple);
-            /* this.getRippleApi.then(() => {
-                this.msg = {
-                    'success': '连接服务器成功！'
-                };
-                return this.api.preparePayment(this.walletAddress, payment);
-            }).then((prepared) => {
-                // console.log('Payment Prepared');
-                this.msg = {
-                    'info': '支付准备已完成！'
-                };
-                return this.api.getLedger().then(ledger => {
-                    // console.log('Current Ledger', ledger.ledgerVersion);
-                    return this.submitTransaction(ledger.ledgerVersion, prepared, this.secret);
-                });
-            }).then((signed) => {
-                // console.log(signed);
-            }).catch(console.error); */
         }
-
     }
 };
 </script>

@@ -51,7 +51,7 @@ export default {
             }],
             value: '',
             Gateways: '',
-            api: this.getRippleApi(),
+            api: this.getRippleApi,
             msg: {},
             flag: 'info'
         };

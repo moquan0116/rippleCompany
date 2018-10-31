@@ -27,7 +27,7 @@ export default {
     },
     created: function () {
         const self = this;
-        const api = this.getRippleApi();
+        const api = this.getRippleApi;
         api.connect().then(function () {
             return api.getAccountInfo(self.$store.state.account.address);
         }).then(function (accountInfo) {

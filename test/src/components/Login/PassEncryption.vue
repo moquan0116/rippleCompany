@@ -124,7 +124,7 @@ export default {
             });
         },
         GenerateAccount: function () {
-            const api = this.getRippleApi();
+            const api = this.getRippleApi;
             const that = this;
             api.connect().then(function () {
                 return api.generateAddress();

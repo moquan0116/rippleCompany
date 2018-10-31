@@ -2,14 +2,12 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
 import App from './App';
-import components from './components/Common/components.js';
 import router from './router';
 import store from './store';
 import VueResource from 'vue-resource';
+
 import 'jquery';
 import 'bootstrap';
-import {RippleAPI} from 'ripple-lib';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import Moment from 'moment';
@@ -17,34 +15,16 @@ import Moment from 'moment';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
+import components from './components/Common/components.js';
+import RippleMy from './ripple/rippleMy';
 import Global from './components/Common/Global';
+
 Vue.use(components);
 Vue.use(ElementUI);
-Vue.config.productionTip = false;
-
-// const walletAddress = 'rU7xCqQeHURdPDzhE2NQ1U4XBjpDpUyFJQ';
-// const walletAddress = 'rKoNYSwjt78AXCKVT7Y5PaaPfBpRgcWw25';
-/* let userInfo = JSON.parse(sessionStorage.getItem('user'));
-let walletAddress = userInfo === null ? 'null' : userInfo.address;
-let secret = userInfo === null ? 'null' : userInfo.secret; */
-// const secret = 'saD2EdEsCuD7YiQ9Sbw9DJuwTwYTL';
-// const secret = 'ssGE93bKwjHL1ypp5BRvQeZG4sEys';
-// const rippleTest = 'wss://s.altnet.rippletest.net:51233';
-const rippleOfficial = 'wss://s1.ripple.com:443';
 Vue.use(VueResource);
-
-/* 在vue中增加一个获取RippleApi的方法 *81F5E21E35407D884A6CD4A731AEBFB6AF209E1B */
-Vue.prototype.getRippleApi = function Ripple () {
-    // 确保只有单例
-    if (Ripple.instance !== undefined) {
-        return Ripple.instance;
-    } else {
-        Ripple.instance = new RippleAPI({server: rippleOfficial});
-        return Ripple.instance;
-    }
-};
+Vue.prototype.getRipple = RippleMy.getInstance();
+Vue.prototype.getRippleApi = RippleMy.getInstance().getRippleApi();
 Vue.prototype.$GLOBAL = Global;
-
 Vue.prototype.dateFormat = function (dateString, type, pattern = 'YYYY-MM-DD HH:mm:ss') {
     if (type === 'UTC') {
         let date = Moment.utc(dateString).toDate();
@@ -53,6 +33,8 @@ Vue.prototype.dateFormat = function (dateString, type, pattern = 'YYYY-MM-DD HH:
         return Moment(dateString).format(pattern);
     }
 };
+
+Vue.config.productionTip = false;
 
 router.beforeEach((to, from, next) => {
     let login = store.state.login;
@@ -81,7 +63,7 @@ new Vue({
     data: {
         currentRoute: window.location.pathname,
         rip: {
-            RippleAPI: RippleAPI
+            RippleAPI: RippleMy.getInstance().getRippleApi()
         }
     },
     router,
