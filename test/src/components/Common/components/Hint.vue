@@ -1,11 +1,8 @@
 <template>
     <div class="row" style="margin-top: 1.5em">
-        <div class="alert alert-info" role="alert">
+        <div class="alert" :class="[typeClass ? 'alert-'+typeClass : 'alert-info']" role="alert">
             <p>
-                {{set.text}}
-            </p>
-            <p>
-                {{$store.state.test}}
+                {{text}}
             </p>
         </div>
     </div>
@@ -14,12 +11,17 @@
 <script>
 export default {
     name: 'Hint',
+    data () {
+        return {
+            parentStyle: this.typeClass
+        };
+    },
     props: {
-        set: {
-            type: Object,
-            default () {
-                return {text: '您的Ripple帐户没有激活。要激活它，您需要发送至少20个XRP到()。'};
-            }
+        text: {
+            default: '您的Ripple帐户没有激活。要激活它，您需要发送至少20个XRP到()。'
+        },
+        typeClass: {
+            require: false // warning、success、info、danger
         }
     }
 };

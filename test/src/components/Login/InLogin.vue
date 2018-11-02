@@ -26,7 +26,7 @@
                 <el-row :gutter="20">
                     <el-col :span="24" >
                         <el-form-item>
-                            <el-button type="primary" @click="submitForm('ruleForm2')">打开账户</el-button>
+                            <el-button type="primary" :loading="loading" @click="submitForm('ruleForm2')">打开账户</el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -58,24 +58,32 @@ export default {
                 ]
             },
             path: '',
-            errorMsg: ''
+            errorMsg: '',
+            loading: false
         };
+    },
+    computed: {
+        login: function () {
+            return this.$store.state.login;
+        }
+    },
+    watch: {
+        login: function (newVal, oldVal) {
+            if (newVal === true) {
+                this.$router.push('/general/balance');
+            }
+        }
     },
     methods: {
         submitForm (formName) {
-            const that = this;
             if (!this.path) {
                 this.$message.error('请选择账户文件');
                 return false;
             } else {
+                this.loading = true;
                 this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        setTimeout(function () {
-                            if (that.$store.state.login === true) {
-                                that.$router.push('/general/balance');
-                            }
-                        }, 1000);
-                    } else {
+                    if (!valid) {
+                        this.$message.error('login error');
                         console.log('error submit');
                         return false;
                     }

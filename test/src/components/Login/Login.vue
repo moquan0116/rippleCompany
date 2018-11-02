@@ -7,7 +7,7 @@
         </div>
         <div class="container-fluid login-main">
             <div class="container">
-                <Hint :set="hint"></Hint>
+                <Hint :text="text"></Hint>
                 <div class="lr-box">
                     <el-tabs type="border-card" stretch>
                         <el-tab-pane label="打开账户">
@@ -36,9 +36,7 @@ export default {
             tabs: ['in-login', 'in-reg'],
             activeName: 'ses',
             tabPosition: 'top',
-            hint: {
-                'text': '你不能使用在Ripple Trade或者网页版的Ripple客户端中注册的用户名和密码登录下载的客户端。你只可以用秘钥来登录已有的Ripple账户。因为下载的客户端把你的登录信息存在了你的电脑里，所以你的账户可以像你的个人电脑一样安全。'
-            }
+            text: '你不能使用在Ripple Trade或者网页版的Ripple客户端中注册的用户名和密码登录下载的客户端。你只可以用秘钥来登录已有的Ripple账户。因为下载的客户端把你的登录信息存在了你的电脑里，所以你的账户可以像你的个人电脑一样安全。'
         };
     },
     methods: {

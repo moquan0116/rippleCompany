@@ -1,5 +1,5 @@
 import {RippleAPI} from 'ripple-lib';
-import Notification from './Notification';
+// import Notification from './Notification';
 
 export default class RippleMy {
     server = 'wss://s1.ripple.com:443';
@@ -21,10 +21,6 @@ export default class RippleMy {
             return new RippleAPI({server: 'wss://s1.ripple.com:443'});
         }
         return RippleMy.ripple;
-    }
-
-    test () {
-        return new Notification({}, 'aaa');
     }
 
     /* 连接ripple服务器 */
@@ -51,27 +47,29 @@ export default class RippleMy {
      * ==================================
      * */
     /* 发起支付 */
-    payment (address, secret, payment) {
+    payment (address, secret, payment, getData, getStatus) {
         this.rippleConnect().then(() => {
-            return this.preparePayment(address, payment);
+            return this.preparePayment(address, payment, getStatus);
         }).then((prepared) => {
-            return this.sign(prepared.txJSON, secret);
+            return this.sign(prepared.txJSON, secret, getStatus);
         }).then((signedData) => {
-            return this.submitTransaction(signedData);
+            return this.submitTransaction(signedData, getStatus);
         }).then((data) => {
-            console.log('有没有呀', data);
+            getData(data);
         }).catch((error) => {
             console.log(error);
         });
     }
 
     /* 准备支付 */
-    preparePayment (address, payment) {
+    preparePayment (address, payment, getStatus) {
+        getStatus({info: '准备支付'});
         return new Promise((resolve, reject) => {
             try {
                 this.ripple.preparePayment(address, payment).then((result) => {
                     resolve(result);
                 });
+                getStatus({success: '准备完成'});
             } catch (e) {
                 reject(e);
             }
@@ -79,10 +77,12 @@ export default class RippleMy {
     }
 
     /* 签名 */
-    sign (txJSON, secret) {
+    sign (txJSON, secret, getStatus) {
+        getStatus({info: '签名...'});
         return new Promise((resolve, reject) => {
             try {
                 resolve(this.ripple.sign(txJSON, secret));
+                getStatus({success: '签名完成'});
             } catch (e) {
                 reject(e);
             }
@@ -90,11 +90,13 @@ export default class RippleMy {
     }
 
     /* 提交事务 */
-    submitTransaction (signedData) {
+    submitTransaction (signedData, getStatus) {
+        getStatus({info: '提交事务...'});
         return new Promise((resolve, reject) => {
             try {
                 this.ripple.submit(signedData.signedTransaction).then((result) => {
                     resolve(result);
+                    getStatus({success: '提交事务完成'});
                 });
             } catch (e) {
                 reject(e);
@@ -103,15 +105,32 @@ export default class RippleMy {
     }
 
     /* 验证事务 */
-    verifyTransaction (transId, options) {
+    verifyTransaction (transId, getStatus) {
+        getStatus({info: '验证事务...'});
         return new Promise((resolve, reject) => {
             try {
                 this.ripple.getTransaction(transId).then((result) => {
                     resolve(result);
+                    getStatus({success: '验证事务完成'});
                 });
             } catch (e) {
                 reject(e);
             }
+        });
+    }
+
+    /* 获取路径 */
+    getPath (pathfind, getStatus) {
+        getStatus({info: '路径获取中...'});
+        return new Promise((resolve, reject) => {
+            this.rippleConnect().then(() => {
+                return this.ripple.getPaths(pathfind);
+            }).then((paths) => {
+                // pathfind.paths = paths.length >= 1 ? paths[0].paths : paths.paths;
+                resolve(paths);
+            }).catch((error) => {
+                reject(error);
+            });
         });
     }
 }

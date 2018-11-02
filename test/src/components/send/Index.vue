@@ -1,5 +1,6 @@
 <template>
   <div class="send-index">
+      <Hint :text="text" :typeClass="style" v-if="text"></Hint>
       <el-form :label-position="labelPosition" ref="formLabelAlign" label-width="80px" :model="formLabelAlign">
           <el-row>
               <el-col :span="12">
@@ -8,13 +9,13 @@
                   </el-form-item>
               </el-col>
           </el-row>
-          <show-type v-if="off === false" :address="address" :addressError="error" v-on:typeData="typeFormData"></show-type>
+          <show-type v-if="off === false" :address="address" :addressError="error"></show-type>
           <el-row>
               <el-col :span="12"></el-col>
           </el-row>
           <el-row>
               <el-col :span="6">
-                  <el-button class="width-full bg_on" v-on:click="sendPayment" v-if="btn === true">发送XRP</el-button>
+                  <el-button class="width-full bg_on" v-on:click="sendPayment"  v-if="btn === true">发送XRP</el-button>
                   <el-button class="width-full bg_off" v-else disabled="">发送XRP</el-button>
               </el-col>
           </el-row>
@@ -25,6 +26,7 @@
 <script>
 import WAValidator from 'wallet-address-validator';
 import ShowType from './SelectType/ShowType';
+import SendCny from './SelectType/SendCny';
 export default {
     name: 'Index',
     data () {
@@ -36,11 +38,11 @@ export default {
             btn: false,
             error: '',
             off: true,
-            path: '',
-            payment: ''
+            payment: '',
+            text: '',
+            style: '',
+            sendPath: ''
         };
-    },
-    created: function () {
     },
     computed: {
         address () {
@@ -58,83 +60,30 @@ export default {
         }
     },
     methods: {
-        typeFormData: function (data) {
-            let num = data.num;
-            let trustline = data.trustline;
-            let temp = '';
-            this.btn = true;
-
-            if (num === '' || trustline === '') {
-                this.btn = false;
-                return false;
-            }
-
-            if (trustline.indexOf('-')) {
-                temp = trustline.split('-').map(function (item) {
-                    return item.replace(/^\s+|\s+$/gm, '');
-                });
-            }
-
-            if (temp.length <= 1) { // 如果没有信任网关
-                return false;
-            }
-
-            this.getPath(this.$store.state.account.address, temp[0], temp[1], num);
-        },
-        getPath: function (address, currency, counterparty, num) {
-            const pathfind = {
-                source: {
-                    address: address
-                },
-                destination: {
-                    address: this.formLabelAlign.address,
-                    amount: {
-                        currency: currency,
-                        counterparty: counterparty,
-                        value: num
-                    }
-                }
-            };
-            const ripple = this.getRippleApi;
-            const that = this;
-            ripple.connect().then(() => {
-                return ripple.getPaths(pathfind);
-            }).then((paths) => {
-                pathfind.source.maxAmount = {
-                    value: num,
-                    currency: currency
-                };
-                pathfind.paths = paths.length >= 1 ? paths[0].paths : paths.paths;
-                that.payment = pathfind;
-            }).catch(console.log);
-        },
         sendPayment: function () {
-            /* let payment = {
-                source: {
-                    address: this.$store.state.account.address,
-                    maxAmount: {
-                        value: this.num,
-                        currency: this.currency
-                    }
-                },
-                destination: {
-                    address: this.toAddress,
-                    amount: {
-                        value: this.amount,
-                        currency: this.currency
-                    }
-                },
-                paths: this.paths
-            }; */
-            this.$message.success('ehllo');
-            console.log(this.payment);
             /* 测试一下支付 */
+            let that = this;
             let ripple = this.getRipple;
-            ripple.payment(this.$store.state.account.address, this.$store.state.account.secret, this.payment);
+            let address = this.$store.state.account.address;
+            let secret = this.$store.state.account.secret;
+            ripple.payment(address, secret, this.payment, function (data) {
+                if (data.resultCode === 'tesSUCCESS') {
+                    that.text = '交易成功';
+                    that.style = 'success';
+                } else {
+                    that.text = '交易失败';
+                    that.style = 'danger';
+                }
+                console.log(data);
+            }, function (status) {
+                that.text = Object.values(status)[0];
+                that.style = Object.keys(status)[0];
+            });
         }
     },
     components: {
-        ShowType
+        ShowType,
+        SendCny
     }
 };
 </script>

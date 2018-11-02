@@ -6,11 +6,7 @@
 
 <script>
 export default {
-    name: 'App',
-    created: function () {
-        let a = this.getRipple.test();
-        console.log(a);
-    }
+    name: 'App'
 };
 </script>
 
