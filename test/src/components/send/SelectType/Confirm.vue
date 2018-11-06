@@ -84,7 +84,7 @@ export default {
     },
     methods: {
         sendPayment: function (data) {
-            if (data.paths.length <= 2) {
+            if (data.hasOwnProperty('paths') && data.paths.length <= 2) {
                 delete data.paths;
             }
 

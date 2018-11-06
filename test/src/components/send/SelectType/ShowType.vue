@@ -47,6 +47,9 @@ export default {
         };
     },
     created: function () {
+        if (this.reset.num) {
+            this.num = this.reset.num;
+        }
         this.typeData.trustline = this.selected;
         this.getTrustlines(this.address);
     },
@@ -129,8 +132,7 @@ export default {
             trustArr.unshift(defaultTrust);
             this.trustlines = trustArr;
 
-            if (this.reset) {
-                this.num = this.reset.num;
+            if (this.reset.trustline) {
                 this.selected = this.reset.trustline;
             }
         },
