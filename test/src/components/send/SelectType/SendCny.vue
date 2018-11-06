@@ -1,30 +1,28 @@
 <template>
-  <div class="send-box" style="margin-top: 2em;">
-      <div class="boxs">
-          <el-row :gutter="12">
-              <el-col :span="8">
-                  <el-card shadow="hover" :body-style="{ padding: '0px' }">
-                      <el-card>
-                          <div class="text item primary-rip">
-                              <span class="title">{{value}}</span>
-                              <span class="content">{{currency}}</span>
-                          </div>
-                          <div class="text item primary-rip">
-                              <span class="memo">({{value}} {{flag}}/{{currency}})</span>
-                          </div>
-                      </el-card>
-                      <el-card :body-style="{ padding: '0px'}">
-                          <div class="text item">
-                              <el-button class="reset-btn">Send {{currency}}</el-button>
-                          </div>
-                      </el-card>
-                  </el-card>
-              </el-col>
-          </el-row>
-      </div>
-      <!--<img class="loading" src="../../../assets/image/loading.png"/>-->
-
-  </div>
+    <div class="send-box" style="margin-top: 2em">
+        <el-row :gutter="12">
+            <div v-for="item in cardData" :key="item.id">
+                <el-col :span="8">
+                    <el-card shadow="hover" :body-style="{ padding: '0px' }">
+                        <el-card>
+                            <div class="text item primary-rip">
+                                <span class="title">{{item.value}}</span>
+                                <span class="content">{{item.currency}}</span>
+                            </div>
+                            <div class="text item primary-rip">
+                                <span class="memo">({{item.value}} {{item.flag}}/{{item.currency}})</span>
+                            </div>
+                        </el-card>
+                        <el-card :body-style="{ padding: '0px'}">
+                            <div class="text item">
+                                <el-button class="reset-btn" v-on:click="sendConfirm(item)">Send {{item.currency}}</el-button>
+                            </div>
+                        </el-card>
+                    </el-card>
+                </el-col>
+            </div>
+        </el-row>
+    </div>
 </template>
 
 <script>
@@ -33,10 +31,7 @@ export default {
     props: ['sendPath'],
     data () {
         return {
-            cardData: '',
-            value: '',
-            currency: '',
-            flag: ''
+            cardData: ''
         };
     },
     created: function () {
@@ -49,19 +44,26 @@ export default {
     },
     methods: {
         format: function (data) {
-            /* if (data.status === '-1') {
-                return false;
-            } */
-            console.log(data);
-            /* this.value = data[0].source.maxAmount.value;
-            this.currency = data[0].source.maxAmount.currency;
-            this.flag = data[0].destination.amount.currency; */
-            /* data.forEach(function (item, key) {
-                let value = item.source.maxAmount.value;
-                let currency = item.source.maxAmount.currency;
-            }) */
+            const that = this;
+            that.cardData = [];
+
+            data.forEach(function (item, key) {
+                let temp = {
+                    id: key,
+                    value: parseFloat(item.source.maxAmount.value).toFixed(4),
+                    currency: item.source.maxAmount.currency,
+                    flag: item.destination.amount.currency,
+                    original: item
+                };
+                that.cardData.push(temp);
+            });
+            this.loading = false;
+        },
+        sendConfirm: function (data) {
+            this.$emit('sendConfirm', data);
         }
     }
+
 };
 </script>
 

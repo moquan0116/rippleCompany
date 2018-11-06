@@ -1,70 +1,33 @@
 <template>
-  <div class="box">
-      <div class="show-type">
-          <el-row :gutter="20">
-              <el-col :span="6">
-                  <el-form-item label="对方将收到" :error="error">
-                      <el-input v-model="num" class="width-full"></el-input>
-                  </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                  <el-form-item label="货币类型">
-                      <el-select v-model="selected" placeholder="请选择" class="gateway-select width-full">
-                          <el-option
-                                  v-for="item in trustlines"
-                                  :key="item.value"
-                                  :label="item.label"
-                                  :value="item.value">
-                          </el-option>
-                      </el-select>
-                  </el-form-item>
-              </el-col>
-          </el-row>
-      </div>
-      <div class="loading" v-if="loading === true">
-          <el-row :gutter="10">
-              <el-col :span="2" >
-                  <div class="grid-content bg-purple">
-                      <div class="" v-loading="loading"></div>
-                  </div>
-              </el-col>
-              <el-col :span="12">
-                  <div class="grid-content bg-purple">
-                      <span>正在计算其它路径...</span>
-                  </div>
-              </el-col>
-          </el-row>
-      </div>
-      <div class="send-box" v-if="showSend">
-          <el-row :gutter="12">
-              <el-col :span="8">
-                  <el-card shadow="hover" :body-style="{ padding: '0px' }">
-                      <el-card>
-                          <div class="text item primary-rip">
-                              <span class="title">{{value}}</span>
-                              <span class="content">{{currency}}</span>
-                          </div>
-                          <div class="text item primary-rip">
-                              <span class="memo">({{value}} {{flag}}/{{currency}})</span>
-                          </div>
-                      </el-card>
-                      <el-card :body-style="{ padding: '0px'}">
-                          <div class="text item">
-                              <el-button class="reset-btn">Send {{currency}}</el-button>
-                          </div>
-                      </el-card>
-                  </el-card>
-              </el-col>
-          </el-row>
-      </div>
+  <div class="show-type">
+      <el-row :gutter="20">
+          <el-col :span="6">
+              <el-form-item label="对方将收到" :error="error">
+                  <el-input v-model="num" class="width-full"></el-input>
+              </el-form-item>
+          </el-col>
+          <el-col :span="12">
+              <el-form-item label="货币类型">
+                  <el-select v-model="selected" placeholder="请选择" class="gateway-select width-full">
+                      <el-option
+                              v-for="item in trustlines"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value">
+                      </el-option>
+                  </el-select>
+              </el-form-item>
+          </el-col>
+      </el-row>
+      <Loading :status="status" :text="text"></Loading>
   </div>
 </template>
 
 <script>
-// import WAValidator from 'wallet-address-validator';
+import Loading from './Loading';
 export default {
     name: 'ShowType',
-    props: ['address', 'addressError'],
+    props: ['address', 'addressError', 'reset'],
     data () {
         return {
             trustlines: [{
@@ -79,11 +42,8 @@ export default {
                 num: '',
                 trustline: ''
             },
-            loading: false,
-            cardData: '',
-            value: '',
-            currency: '',
-            flag: ''
+            status: false,
+            text: ''
         };
     },
     created: function () {
@@ -91,30 +51,25 @@ export default {
         this.getTrustlines(this.address);
     },
     computed: {
-        showSend: function () {
-            return this.checkNum(this.num) && !this.loading
-        }
+
     },
     watch: {
         address: function (newVal, oldVal) {
-            if (this.addressError.length <= 0) {
-                this.getTrustlines(newVal);
+            if (this.addressError.length) {
+                return false;
             }
+
+            this.getTrustlines(newVal);
         },
         num: function (newVal, oldVal) {
-            let toVal = newVal;
-            if (!this.checkNum(newVal)) { // 验证num通过
-                toVal = '';
-            }
-            this.typeData.num = toVal;
+            this.typeData.num = newVal;
         },
         selected: function (newVal, oldVal) {
-            this.checkNum(this.num, true);
             this.typeData.trustline = newVal;
         },
         typeData: {
             handler (newValue, oldValue) {
-                this.getPath(newValue);
+                this.$emit('typeData', newValue);
             },
             deep: true
         }
@@ -139,7 +94,7 @@ export default {
             this.error = '';
             return true;
         },
-        getTrustlines: function (address) {
+        getTrustlines: function (address) { // 取信任网关
             const that = this;
             const ripple = this.getRippleApi;
             ripple.connect().then(function () {
@@ -163,9 +118,6 @@ export default {
             // 只取“乾坤网关”
             trustlines.forEach(function (item, key) {
                 if (item.specification.counterparty === that.$GLOBAL.QKGATEWAY) {
-                    /* let currency = item.specification.currency;
-                    let counterparty = item.specification.counterparty;
-                    let t = currency + ' - ' + counterparty; */
                     let temp = {
                         value: that.$GLOBAL.QKGATEWAY,
                         label: 'CNY - Chinese Yuan'
@@ -176,59 +128,24 @@ export default {
 
             trustArr.unshift(defaultTrust);
             this.trustlines = trustArr;
-        },
-        getPath: function (data) {
-            const that = this;
-            this.loading = true;
-            if (!this.checkNum(data.num)) {
-                this.loading = false;
-                return false;
+
+            if (this.reset) {
+                this.num = this.reset.num;
+                this.selected = this.reset.trustline;
             }
-            const pathfind = {
-                source: {
-                    address: this.$store.state.account.address
-                },
-                destination: {
-                    address: this.address,
-                    amount: {
-                        currency: this.selected === 'XRP' ? 'XRP' : 'CNY',
-                        counterparty: this.$GLOBAL.QKGATEWAY,
-                        value: data.num.replace(/^\s+|\s+$/gm, '')
-                    }
-                }
-            };
-            let goGetPath = this.getRipple.getPath(pathfind, function () {});
-            goGetPath.then((path) => {
-                /* that.$emit('path', {data: path, status: '1'}); */
-                that.formatPath(path);
-            }).catch((error) => {
-                console.log(error);
-                /* if (error instanceof that.getRippleApi.errors.NotFoundError) {
-                    that.$emit('path', {data: '', status: '-1'});
-                } */
-            });
         },
-        formatPath: function (data) {
-            this.value = data[0].source.maxAmount.value;
-            this.currency = data[0].source.maxAmount.currency;
-            this.flag = data[0].destination.amount.currency;
-            this.loading = false;
+        reload: function () {
+            this.num = '';
         }
+    },
+    components: {
+        Loading
     }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    .loading .el-loading-spinner{
-        margin-top: 0 !important;
-    }
-    .loading .el-col{
-        height: 3em !important;
-    }
-    .loading .el-col>div{
-        line-height: 3em;
-    }
     /* send-box */
     .reset-btn{
         width: 100% !important;
