@@ -301,7 +301,7 @@ export default {
             let source = spec.source; // 交易发起源
             let destination = spec.destination; // 交易目标源
             let outcome = data.outcome; // 交易结果对象
-
+            console.log(row.original);
             this.form = {
                 id: tranId, // 事务ID
                 outAddress: data.address, // 转出地址

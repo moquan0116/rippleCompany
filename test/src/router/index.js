@@ -61,7 +61,7 @@ export default new Router({
                 {path: 'basic', component: Basic},
                 {path: 'record', component: Record},
                 {path: 'recordInfo', component: RecordInfo},
-                {path: 'Advanced', component: () => import('@/components/transaction/Advanced')}
+                {path: 'Advanced', component: () => import('@/components/transaction/Advanced/Index')}
             ]
         },
         {
