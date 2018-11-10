@@ -10,8 +10,10 @@ import Transaction from '@/components/transaction/Transaction';
 import Basic from '@/components/transaction/Basic';
 import Record from '@/components/transaction/Record';
 import RecordInfo from '@/components/transaction/RecordInfo';
+import Advanced from '@/components/transaction/Advanced/Index';
 
 import Funds from '@/components/funds/Funds';
+import FundsIndex from '@/components/funds/index';
 
 import NotFound from '@/components/Error/NotFound';
 import Login from '@/components/Login/Login';
@@ -61,7 +63,7 @@ export default new Router({
                 {path: 'basic', component: Basic},
                 {path: 'record', component: Record},
                 {path: 'recordInfo', component: RecordInfo},
-                {path: 'Advanced', component: () => import('@/components/transaction/Advanced/Index')}
+                {path: 'Advanced', component: Advanced}
             ]
         },
         {
@@ -69,7 +71,7 @@ export default new Router({
             name: 'Funds',
             component: Funds,
             children: [
-                {path: '', component: () => import('@/components/funds/index')}
+                {path: '', component: FundsIndex}
             ]
         }
     ]

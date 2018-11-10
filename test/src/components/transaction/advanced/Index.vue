@@ -4,6 +4,10 @@
       <div class="show-res">
           <Hint :text="text" :typeClass="style" v-if="text"></Hint>
       </div>
+      <el-row>
+          <el-button v-on:click="test">试一下子</el-button>
+      </el-row>
+
       <!--选择网关-->
       <div class="card-box card-top">
           <el-row :gutter="20" class="top-one-row">
@@ -38,29 +42,26 @@
           <el-row :gutter="20" class="top-two-row">
               <el-col :span="6">
                   <div class="grid-content">
-                      买一价 = 62.60000
+                      n/a = n/a
                   </div>
               </el-col>
               <el-col :span="6">
                   <div class="grid-content">
-                      买一价 = 62.60000
+                      n/a = n/a
                   </div>
               </el-col>
               <el-col :span="6">
                   <div class="grid-content">
-                      买一价 = 62.60000
+                      n/a = n/a
                   </div>
               </el-col>
               <el-col :span="6">
                   <div class="grid-content">
-                      买一价 = 62.60000
+                      n/a = n/a
                   </div>
               </el-col>
           </el-row>
       </div>
-      <el-row>
-          <el-button v-on:click="test">试一下子</el-button>
-      </el-row>
       <!--买卖-->
       <el-row class="mar-top" :gutter="30">
           <el-col :span="12">
@@ -94,6 +95,10 @@ export default {
                 {
                     lable: 'XRP/CNY.' + this.$GLOBAL.QKGATEWAY,
                     value: 'XRP/CNY.' + this.$GLOBAL.QKGATEWAY
+                },
+                {
+                    lable: 'XRP/CNY.razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA',
+                    value: 'XRP/CNY.razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA'
                 }
             ],
             orderbook: [],
@@ -131,21 +136,40 @@ export default {
             this.value = arr[1] + '/' + arr[0];
         },
         formatSelected: function (selected) {
-            let arr = selected.split('/');
+            let baseCurrency = '';// 买入/卖出的货币类型
+            let baseCounterParty = '';// 网关(暂时不会出现两个货币交易用两个网关,但只管先这样设计)
+            let counterCurrency = '';// 计数(价)货币类型
+            let counterCounterParty = '';// 网关
+
+            let arr = selected.split('/'); // arr[0]是要买入/卖出的货币类型, 用arr[1]货币类型买入/换取
 
             if (arr[0].indexOf('.') !== -1) {
                 let temp = arr[0].split('.');
-                this.baseCurrency = temp[0];
-                this.counterCurrency = arr[1];
-                this.counterParty = temp[1];
+                baseCurrency = temp[0];
+                baseCounterParty = this.getCounterParty(temp[1]);
+            } else { // 为XRP
+                baseCurrency = arr[0];
             }
 
             if (arr[1].indexOf('.') !== -1) {
                 let temp = arr[1].split('.');
-                this.baseCurrency = arr[0];
-                this.counterCurrency = temp[0];
-                this.counterParty = temp[1];
+                counterCurrency = temp[0];
+                counterCounterParty = this.getCounterParty(temp[1]);
+            } else { // 为XRP
+                counterCurrency = arr[1];
             }
+
+            if (baseCurrency && counterCurrency && (baseCounterParty || counterCounterParty)) {
+                this.baseCurrency = baseCurrency;
+                this.counterCurrency = counterCurrency;
+                this.counterParty = baseCounterParty || counterCounterParty; // 此处暂没考虑两个不一样的网关
+            } else {
+                // 获取货币类型/网关错误
+            }
+        },
+        getCounterParty: function (nickname) {
+            // let gateWayRelation = []; // 先模拟网关有别名，暂时直接返回
+            return nickname;
         },
         getOrderBook: function () {
             let orderbook = {
@@ -170,7 +194,7 @@ export default {
             const that = this;
             const ripple = this.getRippleApi;
             ripple.connect().then(function () {
-                return ripple.getOrderbook(address, orderbook, {limit: 50});
+                return ripple.getOrderbook(address, orderbook);
             }).then(function (orders) {
                 that.orderbook = orders;
             }).catch(function (error) {
@@ -178,38 +202,7 @@ export default {
             });
         },
         test: function () {
-            const order = {
-                direction: 'buy',
-                quantity: {
-                    currency: 'XRP',
-                    value: '1'
-                },
-                totalPrice: {
-                    currency: 'CNY',
-                    counterparty: this.$GLOBAL.QKGATEWAY,
-                    value: '2'
-                },
-                passive: true,
-                fillOrKill: false
-            };
-            let that = this;
-            let ripple = this.getRipple;
-            let address = this.$store.state.account.address;
-            let secret = this.$store.state.account.secret;
-            this.submit = true;
-            ripple.submitOrder(address, secret, order, function (data) {
-                if (data.resultCode === 'tesSUCCESS') {
-                    that.text = '交易成功';
-                    that.style = 'success';
-                } else {
-                    that.text = '交易失败';
-                    that.style = 'danger';
-                }
-                console.log(data);
-            }, function (status) {
-                that.text = Object.values(status)[0];
-                that.style = Object.keys(status)[0];
-            });
+            // this.$store.dispatch('updateOrder');
         }
     },
     components: {

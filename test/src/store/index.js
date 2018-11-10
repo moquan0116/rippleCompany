@@ -6,7 +6,9 @@ Vue.use(Vuex);
 const state = {
     accountActivated: true,
     account: '',
-    login: false
+    login: false,
+    myOrder: [],
+    myOrderUpdate: false
 };
 const mutations = {
     login (state, account) {
@@ -25,10 +27,25 @@ const mutations = {
     },
     activated (state) {
         state.accountActivated = true;
+    },
+    myOrderHasUpdate (state) {
+        state.myOrderUpdate = true;
+    },
+    myOrderNotUpdate () {
+        state.myOrderUpdate = false;
     }
 };
 
+const actions = {
+    hasUpdate ({ commit }) {
+        commit('myOrderHasUpdate');
+    },
+    notUpdate ({ commit }) {
+        commit('myOrderNotUpdate');
+    }
+};
 export default new Vuex.Store({
     state,
-    mutations
+    mutations,
+    actions
 });

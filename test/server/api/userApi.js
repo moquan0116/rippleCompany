@@ -24,7 +24,8 @@ const user = sequelize.define('hj_user', {
     secret: Sequelize.STRING,
     name: Sequelize.STRING,
     sex: Sequelize.TINYINT,
-    status: Sequelize.TINYINT
+    status: Sequelize.TINYINT,
+    time: Sequelize.DATE
 },{
     timestamps: false,
     freezeTableName: true,
@@ -32,12 +33,18 @@ const user = sequelize.define('hj_user', {
 router.use(require('cors')());
 
 router.get('/', function (req, res) {
-    res.send('出来吧')
+    let data = {username: 'hj', password: '123456'};
+    user.findOne({
+        where: data
+    }).then(user => {
+        res.type('application/json');
+        res.send(user);
+    })
 });
 /*登陆*/
 router.post('/login', bodyParser.json(),(req, res) => {
     let post = req.body;
-    let data = {username: post.username, password: post.password};
+    let data = {username: 'hj', password: '123456'};
     user.findOne({
         where: data
     }).then(user => {

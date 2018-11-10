@@ -70,10 +70,34 @@ export default class RippleMy {
      * 4、验证事务结果__getTransaction
      * ==================================
      * */
-    /* 发起支付 */
+    /* 提交订单 */
     submitOrder (address, secret, order, getData, getStatus) {
         this.rippleConnect().then(() => {
             return this.prepareOrder(address, order, getStatus);
+        }).then((prepared) => {
+            return this.sign(prepared.txJSON, secret, getStatus);
+        }).then((signedData) => {
+            return this.submitTransaction(signedData, getStatus);
+        }).then((data) => {
+            getData(data);
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+
+    /**
+     * ==================================
+     * 取消订单(暂先这样写)
+     * 1、准备取消订单__prepareOrderCancellation
+     * 2、支付签名__sign
+     * 3、提交已签名的支付__submit
+     * 4、验证事务结果__getTransaction
+     * ==================================
+     * */
+    /* 取消订单 */
+    cancellationOrder (address, secret, orderCancellation, getData, getStatus) {
+        this.rippleConnect().then(() => {
+            return this.prepareOrderCancellation(address, orderCancellation, getStatus);
         }).then((prepared) => {
             return this.sign(prepared.txJSON, secret, getStatus);
         }).then((signedData) => {
@@ -105,6 +129,31 @@ export default class RippleMy {
         getStatus({info: '准备订单'});
         return new Promise((resolve, reject) => {
             this.ripple.prepareOrder(address, order).then((result) => {
+                getStatus({success: '准备完成'});
+                resolve(result);
+            }).catch(error => {
+                reject(error);
+            });
+        });
+    }
+
+    /* 获取地址订单 */
+    getOrdersByAddress (address, option, getData, getStatus) {
+        getStatus({info: '获取订单'});
+        this.rippleConnect().then(() => {
+            return this.ripple.getOrders(address, option, getStatus);
+        }).then((data) => {
+            getData(data);
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+
+    /* 准备取消订单 */
+    prepareOrderCancellation (address, orderCancellation, getStatus) {
+        getStatus({info: '准备取消订单'});
+        return new Promise((resolve, reject) => {
+            this.ripple.prepareOrderCancellation(address, orderCancellation).then((result) => {
                 getStatus({success: '准备完成'});
                 resolve(result);
             }).catch(error => {

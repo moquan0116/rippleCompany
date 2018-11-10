@@ -14,6 +14,7 @@
                       <el-table
                               :data="buyData"
                               :header-row-style="{'height':'100px'}"
+                              :row-style="setRowStyle"
                               style="width: 100%">
                           <el-table-column
                                   prop="address"
@@ -134,8 +135,12 @@ export default {
                     address: that.shortAddress(item.properties.maker),
                     totalPrice: totalPrice.toFixed(2),
                     quantity: quantity.toFixed(),
-                    price: (totalPrice / quantity).toFixed(5)
+                    price: (totalPrice / quantity).toFixed(5),
+                    extend: {highlight: false}
                 };
+                if (item.properties.maker === that.$store.state.account.address) {
+                    data.extend.highlight = true;
+                }
                 that.buyData.push(data);
             });
         },
@@ -149,8 +154,12 @@ export default {
                     address: that.shortAddress(item.properties.maker),
                     totalPrice: totalPrice.toFixed(2),
                     quantity: quantity.toFixed(),
-                    price: (totalPrice / quantity).toFixed(5)
+                    price: (totalPrice / quantity).toFixed(5),
+                    extend: {highlight: false}
                 };
+                if (item.properties.maker === that.$store.state.account.address) {
+                    data.extend.highlight = true;
+                }
                 that.sellData.push(data);
             });
         },
@@ -158,6 +167,11 @@ export default {
             if (!address) return '';
             let len = address.length;
             return address.substr(0, 5) + '...' + address.substring(len - 3, len);
+        },
+        setRowStyle: function (row, index) {
+            if (row.row.extend.highlight === true) {
+                return 'color: #356834;font-weight: 700;';
+            }
         }
     },
     watch: {
