@@ -68,7 +68,7 @@ export default {
             navTopItemChild: {
                 general: {host: '服务器', balance: '余额', history: '历史', phone: '联系人'},
                 // send: {not: '...'},
-                transaction: {basic: '基本', record: '记录', advanced: '高级'}
+                transaction: {simple: 'simple', record: '记录', advanced: '高级'}
                 // funds: {not: '...'}
             },
             currTopItemChild: [],

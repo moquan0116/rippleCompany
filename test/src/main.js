@@ -15,6 +15,7 @@ import Moment from 'moment';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
+import Utils from './components/Common/utils/index.js';
 import components from './components/Common/components.js';
 import RippleMy from './ripple/rippleMy';
 import Global from './components/Common/Global';
@@ -22,6 +23,7 @@ import Global from './components/Common/Global';
 Vue.use(components);
 Vue.use(ElementUI);
 Vue.use(VueResource);
+Vue.prototype.$utils = Utils;
 Vue.prototype.getRipple = RippleMy.getInstance();
 Vue.prototype.getRippleApi = RippleMy.getInstance().getRippleApi();
 Vue.prototype.$GLOBAL = Global;

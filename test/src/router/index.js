@@ -7,7 +7,7 @@ import Host from '@/components/general/Host';
 import Send from '@/components/send/Send';
 
 import Transaction from '@/components/transaction/Transaction';
-import Basic from '@/components/transaction/Basic';
+import Simple from '@/components/transaction/simple/Index';
 import Record from '@/components/transaction/Record';
 import RecordInfo from '@/components/transaction/RecordInfo';
 import Advanced from '@/components/transaction/Advanced/Index';
@@ -58,9 +58,9 @@ export default new Router({
             path: '/transaction',
             name: 'Transaction',
             component: Transaction,
-            redirect: '/transaction/basic',
+            redirect: '/transaction/simple',
             children: [
-                {path: 'basic', component: Basic},
+                {path: 'simple', component: Simple},
                 {path: 'record', component: Record},
                 {path: 'recordInfo', component: RecordInfo},
                 {path: 'Advanced', component: Advanced}

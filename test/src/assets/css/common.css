@@ -3,3 +3,15 @@
     padding-right: 1em;
     font-size: 2em;
 }
+/* 自定义错误input */
+.error .el-input__inner{
+    border: 1px solid #f56c6c !important;
+}
+.error + .error_msg{
+    color: #f56c6c;
+    font-size: 12px;
+    line-height: 1;
+    padding-top: 4px;
+    position: absolute;
+    top: 100%;
+}
