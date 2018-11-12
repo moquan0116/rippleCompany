@@ -1,13 +1,5 @@
 <template>
   <div class="advanced">
-      <!--测试显示状态-->
-      <div class="show-res">
-          <Hint :text="text" :typeClass="style" v-if="text"></Hint>
-      </div>
-      <el-row>
-          <el-button v-on:click="test">试一下子</el-button>
-      </el-row>
-
       <!--选择网关-->
       <div class="card-box card-top">
           <el-row :gutter="20" class="top-one-row">

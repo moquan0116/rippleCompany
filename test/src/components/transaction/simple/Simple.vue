@@ -1,23 +1,27 @@
 <template>
     <div class="basic">
-        <el-row :gutter="20">
-            <el-col :span="4">
-                <el-input v-model="formData.input" :class="{'error': iptError}" placeholder="请输入金额"></el-input>
-                <div class="error_msg" v-if="iptError">
-                    {{iptError}}
-                </div>
-            </el-col>
-            <el-col :span="8" class="trust">
-                <el-select v-model="formData.selected" placeholder="请选择">
-                    <el-option
-                            v-for="item in trustlines"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                    </el-option>
-                </el-select>
-            </el-col>
-        </el-row>
+        <el-form :model="formData" status-icon label-position="top" ref="formData" label-width="100px" class="demo-ruleForm">
+            <el-row :gutter="20">
+                <el-col :span="4">
+                    <el-form-item label="接收" prop="input">
+                        <el-input type="text" v-model="formData.input" placeholder="请输入金额" autocomplete="off"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="8" class="trust">
+                    <el-form-item prop="selected">
+                        <el-select v-model="formData.selected" placeholder="请选择">
+                            <el-option
+                                    v-for="item in trustlines"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+        </el-form>
+
     </div>
 </template>
 
@@ -71,7 +75,5 @@ export default {
 .basic{
     margin: 2em auto;
 }
-.trust .el-select{
-    width: 100% !important;
-}
+
 </style>

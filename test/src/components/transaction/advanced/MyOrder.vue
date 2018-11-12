@@ -45,9 +45,6 @@
               </template>
           </el-table-column>
       </el-table>
-      <el-row>
-          <el-button v-on:click="test">试一下子</el-button>
-      </el-row>
   </div>
 </template>
 
@@ -83,9 +80,6 @@ export default {
         }
     },
     methods: {
-        test: function () {
-            this.getMyOrders();
-        },
         getMyOrders: function () {
             let address = this.$store.state.account.address;
             let that = this;
