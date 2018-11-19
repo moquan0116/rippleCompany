@@ -12,4 +12,5 @@ export default {
 
 <style>
 @import "./assets/css/common.css";
+@import "./assets/font-awesome/css/font-awesome.min.css";
 </style>

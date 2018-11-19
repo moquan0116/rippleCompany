@@ -22,3 +22,75 @@
 .trust .el-form-item__content{
     margin-top: 3.9em;
 }
+
+/* 历史记录 */
+.his-aside .el-collapse{
+    padding:0 0 0.1em 0 !important;
+    margin-bottom: 1em;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+}
+.his-aside .el-collapse-item__wrap {
+    border-bottom:0 !important;
+}
+.his-aside .el-collapse-item__header{
+    padding:0 0 0 1em !important;
+    background: #F3F3F3 !important;
+    font-size: 1.5em;
+    font-weight: 400;
+    color: #1E3F78;
+    -webkit-user-select: none;
+}
+.his-aside .el-collapse-item__content{
+    background: #FFFFFF !important;
+    padding-bottom: 0 !important;
+}
+.his-aside .el-collapse-item__content>div:first-child .el-row{
+    margin-top: 1em;
+}
+.his-aside .el-collapse-item__content>div .el-row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-top: 0.5em;
+    background: #F3F3F3;
+    padding: 0.5em 0;
+    border: 1px solid #cccccc;
+}
+.his-aside .el-collapse-item__content .el-row .el-col>div{
+    color: #888888;
+    -webkit-user-select: none;
+}
+.his-aside .el-collapse-item__content .el-row:hover{
+    cursor: pointer;
+}
+.his-aside .icon{
+    text-align: center;
+    vertical-align: middle;
+}
+.his-aside .icon>div{
+    display: inline-block;
+    width: 1em !important;
+    height: 0.2em;
+    background: url("../image/his_1.png")no-repeat center center;
+}
+.his-aside .icon>div>img{
+    width: 100%;
+}
+
+.his-aside .selected{
+    background: #D1DEF1 !important;
+}
+.his-aside .selected .icon>div{
+    display: inline-block;
+    width: 1em !important;
+    height: 1em;
+    background: url("../image/his_2.png")no-repeat;
+    background-size:cover;
+}
+.his-aside .selected .el-col>div{
+    color: black !important;
+}
+/* 交易历史主内容页 */
+.collapse-box .el-collapse-item__content{
+    padding-bottom: 0.5em !important;
+}

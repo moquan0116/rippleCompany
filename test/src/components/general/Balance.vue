@@ -1,5 +1,5 @@
 <template>
-    <div id="balance">
+    <div class="balance">
         <el-collapse v-model="activeNames">
             <el-collapse-item>
                 <template slot="title">
@@ -121,43 +121,43 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
-.el-collapse{
+.balance .el-collapse{
     border: 1px solid #CCCCCA !important;
     margin-bottom: 2em;
     padding: 1em;
 }
-.el-collapse-item__content{
+.balance .el-collapse-item__content{
     padding-bottom: 0 !important;
 }
-.el-collapse,.el-collapse-item__header,.el-collapse-item__content{
-    background: #F3F3F3 !important;
+.balance .el-collapse,.el-collapse-item__header,.el-collapse-item__content{
+    background:#F3F3F3 !important;
 }
-.el-collapse-item__arrow{
+.balance .el-collapse-item__arrow{
     display: none !important;
 }
 
-.el-collapse-item__wrap{
-    /*border-bottom: 1px solid #CCCCCA;*/
+.balance .el-collapse-item__wrap{
+    /*border-bottom: 1px solid .CCCCCA;*/
 }
-.el-collapse-item__content .el-row{
+.balance .el-collapse-item__content .el-row{
     border-top:1px solid #CCCCCA !important;
     height: 3.5em;
     line-height: 3.5em;
     padding-left: 1em;
 }
-.icon-ripple-logo {
+.balance .icon-ripple-logo {
     display: inline-block;
     width: 25px;
     height: 25px;
 }
-.font-bal{
+.balance .font-bal{
     font-size: 1.4em;
 }
-.tit-coll{
+.balance .tit-coll{
     font-size: 1.6em;
     font-weight: 600
 }
-.con-coll{
+.balance .con-coll{
     font-size: 1.4em;
     font-weight: 600;
 }

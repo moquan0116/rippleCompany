@@ -1,15 +1,15 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+
 import General from '@/components/general/General';
 import Balance from '@/components/general/Balance';
-import Host from '@/components/general/Host';
+import HistoryIndex from '@/components/general/history/Index';
 
 import Send from '@/components/send/Send';
+import SendIndex from '@/components/send/Index';
 
 import Transaction from '@/components/transaction/Transaction';
 import Simple from '@/components/transaction/simple/Index';
-import Record from '@/components/transaction/Record';
-import RecordInfo from '@/components/transaction/RecordInfo';
 import Advanced from '@/components/transaction/Advanced/Index';
 
 import Funds from '@/components/funds/Funds';
@@ -43,7 +43,7 @@ export default new Router({
             redirect: '/general/balance',
             children: [
                 {path: 'balance', component: Balance},
-                {path: 'host', component: Host}
+                {path: 'history', component: HistoryIndex}
             ]
         },
         {
@@ -51,7 +51,7 @@ export default new Router({
             name: 'Send',
             component: Send,
             children: [
-                {path: '', component: () => import('@/components/send/index')}
+                {path: '', component: SendIndex}
             ]
         },
         {
@@ -61,8 +61,6 @@ export default new Router({
             redirect: '/transaction/simple',
             children: [
                 {path: 'simple', component: Simple},
-                {path: 'record', component: Record},
-                {path: 'recordInfo', component: RecordInfo},
                 {path: 'Advanced', component: Advanced}
             ]
         },

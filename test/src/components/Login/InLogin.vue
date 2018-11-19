@@ -70,6 +70,7 @@ export default {
     watch: {
         login: function (newVal, oldVal) {
             if (newVal === true) {
+                this.getTransactions(this.$store.state.account.address);
                 this.$router.push('/general/balance');
             }
         }
@@ -90,7 +91,7 @@ export default {
                 });
             }
         },
-        getAccountInfo: function (params) {
+        getAccountInfo: function (params) { // 获取用户信息
             const address = params.address || this.$store.state.account.address;
             const self = this;
             const ripple = this.getRippleApi;
@@ -109,7 +110,7 @@ export default {
                 return error;
             });
         },
-        getDecryptContent: function (callback) {
+        getDecryptContent: function (callback) { // 解密账户
             this.$GLOBAL.ipc.send('decrypt', {
                 path: this.path,
                 pwd: this.ruleForm2.password
@@ -124,7 +125,7 @@ export default {
                 }
             });
         },
-        showDialog: function () {
+        showDialog: function () { // 显示选择文件对话框
             this.$GLOBAL.ipc.send('open-dialog');
             this.$GLOBAL.ipc.on('in-open', (event, paths) => {
                 if (paths.length) {
@@ -136,6 +137,16 @@ export default {
         },
         resetForm (formName) {
             this.$refs[formName].resetFields();
+        },
+        getTransactions (address) { // 获取交易数据
+            let that = this;
+            let ripple = this.getRipple;
+            let options = {limit: 200};
+            ripple.getTrader(address, options, function (data) {
+                that.$store.commit('setTransactions', data);
+            }, function (status) {
+                console.log(status);
+            });
         }
     }
 };

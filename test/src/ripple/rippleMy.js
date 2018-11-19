@@ -1,4 +1,4 @@
-import {RippleAPI} from 'ripple-lib';
+import {RippleAPI, RippleAPIBroadcast} from 'ripple-lib';
 // import Notification from './Notification';
 
 export default class RippleMy {
@@ -14,6 +14,9 @@ export default class RippleMy {
             return new RippleMy();
         }
         return RippleMy.instance;
+    }
+    getRippleAPIBroadcast () {
+        console.log(RippleAPIBroadcast);
     }
 
     getRippleApi () { // 暂先不改变vue内部获取rippleApi接口
@@ -106,6 +109,41 @@ export default class RippleMy {
             getData(data);
         }).catch((error) => {
             console.log(error);
+        });
+    }
+
+    /**
+     * ==================================
+     * 获取交易数据(暂先这样写)
+     * 1、调用rippleApi__getTransactions
+     * ==================================
+     *
+     * @params string address
+     * @params object options
+     * @params function getData //结果处理函数
+     * @params function getStatus //执行状态处理函数
+     *
+     * * * */
+    /* 获取交易数据 */
+    getTrader (address, options, getData, getStatus) {
+        this.rippleConnect().then(() => {
+            return this.getTransactions(address, options, getStatus);
+        }).then((transactions) => {
+            getData(transactions);
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+
+    /* 获取交易数据 */
+    getTransactions (address, options, getStatus) {
+        getStatus({info: '获取交易数据...'});
+        return new Promise((resolve, reject) => {
+            this.ripple.getTransactions(address, options).then((result) => {
+                resolve(result);
+            }).catch(error => {
+                reject(error);
+            });
         });
     }
 

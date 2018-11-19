@@ -8,7 +8,8 @@ const state = {
     account: '',
     login: false,
     myOrder: [],
-    myOrderUpdate: false
+    myOrderUpdate: false,
+    transactions: null
 };
 const mutations = {
     login (state, account) {
@@ -33,6 +34,9 @@ const mutations = {
     },
     myOrderNotUpdate () {
         state.myOrderUpdate = false;
+    },
+    setTransactions (state, data) {
+        state.transactions = data;
     }
 };
 
